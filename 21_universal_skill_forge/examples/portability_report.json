@@ -1,0 +1,29 @@
+{
+  "offline": true,
+  "providers": [
+    "ollama",
+    "openai"
+  ],
+  "skills_checked": 2,
+  "skills_portable": 2,
+  "reports": [
+    {
+      "skill": "calculator",
+      "providers": {
+        "ollama": true,
+        "openai": true
+      },
+      "errors": [],
+      "portable": true
+    },
+    {
+      "skill": "weather",
+      "providers": {
+        "ollama": true,
+        "openai": true
+      },
+      "errors": [],
+      "portable": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# The tested routing core (decision.py, registry.py, route.py, benchmark_router.py)
+# runs on the Python standard library alone. The packages below are pinned to the
+# exact versions verified on the development machine (Windows 11, Python 3.12.6).
+requests==2.34.2        # light; used only by optional HTTP integrations, not the tested core
+python-dotenv==1.2.2    # light; convenience for API keys in the optional live-call layer
+
+# Optional / heavy-ish: NOT imported by the current tested core.
+# Reserved for a learned intent classifier (see "Limitations" in README).
+scikit-learn>=1.5.0     # optional; routing works without it
+numpy>=1.26.0           # optional; only needed together with scikit-learn
+
+# Optional live model calls (route.py imports it lazily and degrades gracefully):
+# openai>=1.0           # install only if you actually call Ollama/vLLM/OpenAI endpoints

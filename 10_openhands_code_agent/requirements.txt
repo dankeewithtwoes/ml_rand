@@ -1,0 +1,7 @@
+# Required for tests and the offline safety-gate demo.
+pytest==9.0.2
+
+# Optional: only needed for the LLM repair loop (repair.py / agent.py).
+# The safety gate, tests, and demo run without it.
+openai==2.31.0
+python-dotenv==1.2.2

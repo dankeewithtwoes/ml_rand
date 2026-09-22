@@ -1,0 +1,11 @@
+$ python --version
+Python 3.12.6
+
+$ python parse.py --input examples/sample_invoice.txt --output examples/demo_output.json --no-llm
+[parse] 1 pages -> examples\demo_output.json
+
+$ python -m unittest test_evidence.py 2>&1 | tail -4
+----------------------------------------------------------------------
+Ran 11 tests in 0.091s
+
+OK

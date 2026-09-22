@@ -1,0 +1,4 @@
+[
+  {"input": {"expression": "2 + 2 * 5"}, "expected": {"result": 12}},
+  {"input": {"expression": "(10 - 4) / 2"}, "expected": {"result": 3.0}}
+]

@@ -1,0 +1,10 @@
+{"instruction": "Classify the sentiment of the following text.", "input": "I absolutely love this product, it works perfectly.", "output": "positive"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Best purchase I made this year.", "output": "positive"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Amazing quality and fast shipping.", "output": "positive"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Totally recommend to everyone.", "output": "positive"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Exceeded my expectations.", "output": "positive"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Terrible quality, broke after one day.", "output": "negative"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Worst experience ever, do not buy.", "output": "negative"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Completely disappointed with this item.", "output": "negative"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Waste of money.", "output": "negative"}
+{"instruction": "Classify the sentiment of the following text.", "input": "Not worth the price.", "output": "negative"}

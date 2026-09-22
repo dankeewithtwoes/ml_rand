@@ -1,0 +1,39 @@
+{
+  "models": [
+    {
+      "name": "llama3.1",
+      "type": "local",
+      "url": "http://localhost:11434/v1",
+      "cost_per_1k_tokens": 0.0,
+      "avg_latency_ms": 800,
+      "strengths": [
+        "private",
+        "general",
+        "cheap"
+      ]
+    },
+    {
+      "name": "qwen2.5-1.5b",
+      "type": "local",
+      "url": "http://localhost:8000/v1",
+      "cost_per_1k_tokens": 0.0,
+      "avg_latency_ms": 300,
+      "strengths": [
+        "fast",
+        "coding",
+        "private"
+      ]
+    },
+    {
+      "name": "gpt-4o-mini",
+      "type": "cloud",
+      "url": "https://api.openai.com/v1",
+      "cost_per_1k_tokens": 0.00015,
+      "avg_latency_ms": 600,
+      "strengths": [
+        "reasoning",
+        "instruction"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Baseline: 3 failed in 0.22s (expected: buggy sample fails)
+[ACCEPTED] correct_minimal_fix: changed_lines=6 errors=[]
+[BLOCKED] fix_with_eval_injection: changed_lines=4 errors=['blocked call introduced: eval']
+[BLOCKED] overbroad_rewrite: changed_lines=133 errors=['change budget exceeded: 133 > 80']
+[BLOCKED] broken_syntax_reply: changed_lines=0 errors=['syntax error: invalid syntax']
+Summary: 1 accepted, 3 blocked out of 4 candidates
+Report written to demo\policy_gate_report.json

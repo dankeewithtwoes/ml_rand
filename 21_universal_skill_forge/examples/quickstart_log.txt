@@ -1,0 +1,90 @@
+# Quickstart terminal log - captured on this machine (Windows 11, Python 3.12.6)
+# Each command is shown prefixed with '>', followed by its real output.
+
+> python skillforge.py doctor
+{
+  "ok": true,
+  "python": "3.12.6",
+  "skills_dir": "D:\\codex tasks\\rezume_git\\21_universal_skill_forge\\skills",
+  "skills": 2,
+  "errors": []
+}
+
+> python skillforge.py list
+[
+  {
+    "name": "calculator",
+    "version": "0.1.0",
+    "description": "Evaluate a safe arithmetic expression.",
+    "path": "D:\\codex tasks\\rezume_git\\21_universal_skill_forge\\skills\\calculator"
+  },
+  {
+    "name": "weather",
+    "version": "1.0.0",
+    "description": "Return live keyless Open-Meteo weather for a geocoded city with provenance.",
+    "path": "D:\\codex tasks\\rezume_git\\21_universal_skill_forge\\skills\\weather"
+  }
+]
+
+> python skillforge.py test skills/calculator
+{
+  "skill": "calculator",
+  "passed": true,
+  "cases": [
+    {
+      "case": 1,
+      "ok": true,
+      "actual": {
+        "result": 12
+      }
+    },
+    {
+      "case": 2,
+      "ok": true,
+      "actual": {
+        "result": 3.0
+      }
+    }
+  ]
+}
+
+> python skillforge.py run skills/calculator --input '{"expression":"2 + 3 * 4"}'
+{
+  "skill": "calculator",
+  "result": {
+    "result": 14
+  }
+}
+
+> python demo_portability.py
+{
+  "offline": true,
+  "providers": [
+    "ollama",
+    "openai"
+  ],
+  "skills_checked": 2,
+  "skills_portable": 2,
+  "reports": [
+    {
+      "skill": "calculator",
+      "providers": {
+        "ollama": true,
+        "openai": true
+      },
+      "errors": [],
+      "portable": true
+    },
+    {
+      "skill": "weather",
+      "providers": {
+        "ollama": true,
+        "openai": true
+      },
+      "errors": [],
+      "portable": true
+    }
+  ]
+}
+
+[demo] report written to examples\portability_report.json

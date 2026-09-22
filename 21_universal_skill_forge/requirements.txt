@@ -1,0 +1,11 @@
+# Offline core (CLI, validation, portability contract, tests)
+jsonschema==4.23.0
+
+# Declared for optional tooling; not imported by the offline core
+pyyaml==6.0.3
+requests==2.34.2
+python-dotenv==1.2.2
+
+# Optional provider integration (runtime.py calls Ollama / OpenAI-compatible
+# endpoints): requires the `openai` package, which is intentionally NOT pinned
+# here because the tested core runs fully offline without it.

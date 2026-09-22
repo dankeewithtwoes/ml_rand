@@ -1,0 +1,13 @@
+# Lightweight dependencies, pinned to the exact versions verified on the
+# development machine (Windows 11, Python 3.12.6).
+pillow==12.2.0        # renders PDF pages for local OCR
+pytesseract>=0.3.13   # wrapper for the installed local Tesseract executable
+requests==2.34.2      # HTTP helpers for optional integrations
+python-dotenv==1.2.2  # local config loading
+
+# Compiled wheel required for PDF text extraction and page rendering.
+pymupdf>=1.24.0
+
+# Note: LLM-based structuring (parse.py without --no-llm) additionally needs
+# the `openai` SDK and a running local Ollama server. Both are optional and
+# never required for the offline demo or the test suite.

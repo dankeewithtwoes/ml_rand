@@ -1,0 +1,25 @@
+seed: 42
+
+data:
+  n_samples: 2000
+  noise: 0.15
+  test_ratio: 0.2
+
+model:
+  input_dim: 2
+  hidden_dim: 16
+  num_classes: 2
+
+training:
+  epochs: 50
+  lr: 0.01
+  batch_size: 32
+
+logging:
+  experiment_name: "pytorch_two_moons"
+  log_dir: "demo/mlruns"
+
+output:
+  model_path: "demo/model.pt"
+  onnx_path: "demo/model.onnx"
+  plot_path: "demo/decision_boundary.png"

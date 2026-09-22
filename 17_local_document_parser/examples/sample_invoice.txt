@@ -1,0 +1,8 @@
+ACME Parts GmbH
+Invoice number: INV-2026-0042
+Invoice date: 2026-07-01
+Due date: 2026-07-31
+Bill to: Northwind Traders
+Total due: $1,204.50
+Currency: USD
+Payment terms: net 30

@@ -1,0 +1,3 @@
+{"timestamp": 1784293468.1814904, "model": "mock-llm", "latency_s": 0.028, "prompt": {"characters": 30, "sha256": "115049a298532be2f181edb03f766770c0db84c22aff39003fec340deaec7545"}, "checks": {"pii": [], "toxicity": false, "injection": false}}
+{"timestamp": 1784293468.196598, "model": "mock-llm", "latency_s": 0.0, "prompt": {"characters": 44, "sha256": "e32f8b05af3850bd71e9feb9f2f923706e403d68f076f6383ea53e77e9226984"}, "checks": {"pii": [{"type": "EMAIL", "start": 12, "end": 30}], "toxicity": false, "injection": false}}
+{"timestamp": 1784293468.2123537, "model": "mock-llm", "latency_s": 0.0, "prompt": {"characters": 57, "sha256": "25b36c48cd099978ade4667b856d74d96b5d212e7133bc7d5d59bce9030715b6"}, "checks": {"pii": [], "toxicity": false, "injection": true}}

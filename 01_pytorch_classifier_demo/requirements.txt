@@ -1,0 +1,17 @@
+# Light dependencies — pinned to the exact versions used for the verified run
+# (Windows 11, Python 3.12.6, CPU-only).
+numpy==2.1.2
+matplotlib==3.9.3
+scikit-learn==1.8.0
+hydra-core==1.3.2
+omegaconf==2.3.0
+pyyaml==6.0.3
+
+# Heavy: PyTorch. Required for train.py / evaluate.py / infer.py and the
+# --model mode of the calibration demo. The CPU wheel is sufficient.
+# NOT needed for the stdlib demo, the calibration tests, or src/reliability.py.
+torch>=2.3.0
+
+# Optional integrations — not required for the quickstart, demo, or tests:
+mlflow>=2.13.0   # experiment tracking in train.py; auto-skipped when absent
+onnx>=1.16.0     # only for onnx_export.py

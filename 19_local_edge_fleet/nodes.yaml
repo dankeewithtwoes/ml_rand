@@ -1,0 +1,7 @@
+nodes:
+  - name: node-1
+    url: http://localhost:9001
+    weight: 1
+  - name: node-2
+    url: http://localhost:9002
+    weight: 1

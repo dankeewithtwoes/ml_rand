@@ -1,0 +1,9 @@
+flask==3.1.0
+requests==2.34.2
+openai==2.31.0
+python-dotenv==1.2.2
+# Optional and heavy (pulls in spaCy + model download): ML-based PII detection.
+# Uncomment to enable. Without it, guard_proxy falls back to the regex
+# heuristics in policies.py, which is the configuration all tests and the
+# offline demo run in.
+# presidio-analyzer>=2.2.0

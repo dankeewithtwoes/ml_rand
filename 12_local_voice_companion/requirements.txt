@@ -1,0 +1,7 @@
+# Local LLM client (Ollama's OpenAI-compatible endpoint)
+openai>=1.30.0
+
+# Real local audio pipeline
+sounddevice>=0.4.7
+faster-whisper>=1.0.0
+pyttsx3>=2.90

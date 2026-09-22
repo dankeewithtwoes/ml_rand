@@ -1,0 +1,12 @@
+# Core memory lifecycle (add / search / export / delete) runs on the Python
+# standard library only (sqlite3) — no install required for the quickstart.
+#
+# Light dependencies, pinned to the versions verified in the dev environment:
+python-dotenv==1.2.2
+requests==2.34.2
+#
+# Optional heavy extras — enable the vector-search path (ChromaDB) and the
+# LLM answer layer in ask.py. Not required for the core lifecycle: without
+# them the store falls back to SQLite keyword search (verified offline).
+chromadb>=0.5.0                # optional, heavy: vector store backend
+sentence-transformers>=3.0.0   # optional, heavy: embeddings for ChromaDB

@@ -1,0 +1,12 @@
+[demo] environment: Windows 11, Python 3.12.6, AMD64
+[demo] starting mock LLM on 127.0.0.1:11434
+[demo] guard proxy on 127.0.0.1:11435 -> mock target
+[demo] safe prompt (allowed): HTTP 200 -> [mock-llm reply] What is the capital of France?
+[demo] PII prompt (blocked): HTTP 400 -> guardrail blocked {'injection': False, 'pii': [{'end': 30, 'start': 12, 'type': 'EMAIL'}], 'toxicity': False}
+[demo] injection prompt (blocked): HTTP 400 -> guardrail blocked {'injection': True, 'pii': [], 'toxicity': False}
+[demo] raw log line stored for the blocked PII call:
+       {"timestamp": 1784293468.196598, "model": "mock-llm", "latency_s": 0.0, "prompt": {"characters": 44, "sha256": "e32f8b05af3850bd71e9feb9f2f923706e403d68f076f6383ea53e77e9226984"}, "checks": {"pii": [{"type": "EMAIL", "start": 12, "end": 30}], "toxicity": false, "injection": false}}
+[demo] verified: raw prompt text never appears in guard_logs.jsonl
+[dashboard] {'total_calls': 3, 'blocked_calls': 2, 'avg_latency_s': 0.028, 'p50_latency_s': 0.028, 'models': {'mock-llm': 3}}
+[demo] artifacts: demo/guard_logs.jsonl, demo/dashboard.json
+[demo] transcript saved to docs/demo_output.txt

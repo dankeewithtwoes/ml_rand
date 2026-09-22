@@ -1,0 +1,9 @@
+{
+  "total_calls": 3,
+  "blocked_calls": 2,
+  "avg_latency_s": 0.028,
+  "p50_latency_s": 0.028,
+  "models": {
+    "mock-llm": 3
+  }
+}

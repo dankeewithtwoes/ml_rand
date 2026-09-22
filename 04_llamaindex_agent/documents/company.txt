@@ -1,0 +1,3 @@
+Our company sells two products: Widget Pro and Widget Lite.
+Widget Pro costs $120 per unit and is targeted at enterprise customers.
+Widget Lite costs $45 per unit and is targeted at small businesses.

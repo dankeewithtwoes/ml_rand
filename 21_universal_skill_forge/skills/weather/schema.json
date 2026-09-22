@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "city": {
+      "type": "string",
+      "description": "City name resolved through Open-Meteo geocoding",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "language": {
+      "type": "string",
+      "description": "Two-letter language code for place-name geocoding",
+      "pattern": "^[A-Za-z]{2}$",
+      "default": "ru"
+    }
+  },
+  "required": ["city"],
+  "additionalProperties": false
+}

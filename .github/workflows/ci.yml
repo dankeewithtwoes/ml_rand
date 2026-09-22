@@ -1,0 +1,38 @@
+name: quality-gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install light test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Root quality gate (21 projects)
+        run: python quality_gate.py
+
+      - name: Flagship behavioral tests
+        run: |
+          set -e
+          cd 01_pytorch_classifier_demo && python -m unittest discover -s tests -q && cd ..
+          cd 03_langchain_rag_chat && python -m unittest discover -s tests -q && cd ..
+          cd 07_vllm_serving && python -m unittest test_latency_stats -q && cd ..
+          cd 10_openhands_code_agent && python -m pytest test_repair_policy.py -q && cd ..
+          cd 11_local_knowledge_os && python -m unittest test_knowledge_store -q && cd ..
+          cd 14_local_model_router && python -m unittest test_decision -q && cd ..
+          cd 17_local_document_parser && python -m unittest test_evidence -q && cd ..
+          cd 18_local_ai_observability && python -m unittest test_policies -q && cd ..
+          cd 20_local_redteam_arena && python -m unittest discover -s tests -q && cd ..
+          cd 21_universal_skill_forge && python -m unittest discover -s tests -q && cd ..

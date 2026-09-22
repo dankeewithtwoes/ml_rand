@@ -1,0 +1,4 @@
+# Core (latency_stats.py, demo_tail_latency.py, tests) is stdlib-only.
+openai==2.31.0
+# Optional, heavy (GPU inference server; Linux/CUDA wheels only — not installable on this Windows machine):
+vllm>=0.5.0

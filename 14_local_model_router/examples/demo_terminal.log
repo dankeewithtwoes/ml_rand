@@ -1,0 +1,50 @@
+$ python route.py --prompt "Rotate my database password and restart the service" --registry examples/registry.json
+[intent] private
+[router] -> qwen2.5-1.5b (local)
+[answer] [skip] model call failed: Connection error.
+
+$ python route.py --prompt "Write a python function to deduplicate a list" --registry examples/registry.json
+[intent] code
+[router] -> qwen2.5-1.5b (local)
+[answer] [skip] model call failed: Connection error.
+
+$ python benchmark_router.py --registry examples/registry.json --output examples/router_benchmark.json
+[benchmark] accuracy=0.25 cost_saved=$0.00060 -> examples/router_benchmark.json
+
+$ cat examples/router_benchmark.json
+{
+  "routing_accuracy": 0.25,
+  "cloud_only_cost": 0.0006,
+  "routed_cost": 0.0,
+  "cost_saved": 0.0006,
+  "details": [
+    {
+      "prompt": "Переведи договор на английский",
+      "expected_intent": "legal",
+      "predicted_intent": "general",
+      "selected_model": "llama3.1",
+      "private": true
+    },
+    {
+      "prompt": "Напиши функцию сортировки на Python",
+      "expected_intent": "code",
+      "predicted_intent": "code",
+      "selected_model": "qwen2.5-1.5b",
+      "private": false
+    },
+    {
+      "prompt": "Расскажи сказку на ночь",
+      "expected_intent": "creative",
+      "predicted_intent": "general",
+      "selected_model": "llama3.1",
+      "private": false
+    },
+    {
+      "prompt": "Мой пароль от банка 1234",
+      "expected_intent": "private",
+      "predicted_intent": "general",
+      "selected_model": "llama3.1",
+      "private": true
+    }
+  ]
+}

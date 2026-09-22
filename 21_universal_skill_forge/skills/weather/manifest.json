@@ -1,0 +1,5 @@
+{
+  "name": "weather",
+  "version": "1.0.0",
+  "description": "Return live keyless Open-Meteo weather for a geocoded city with provenance."
+}

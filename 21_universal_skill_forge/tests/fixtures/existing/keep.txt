@@ -1,0 +1,1 @@
+This file proves create_skill refuses to overwrite a non-empty directory.

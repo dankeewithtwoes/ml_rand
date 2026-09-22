@@ -1,0 +1,30 @@
+{
+  "format": "knowledge-os-export",
+  "version": 1,
+  "episodes": [
+    {
+      "id": 4,
+      "content": "Book idea: local-first AI memory as a second brain",
+      "tags": "ideas",
+      "created_at": 1784293305.4533494
+    },
+    {
+      "id": 3,
+      "content": "Office address: Moscow, Lenina street 10",
+      "tags": "work",
+      "created_at": 1784293305.4484217
+    },
+    {
+      "id": 2,
+      "content": "Pasta recipe: 200g pasta, 100g cheese, one egg",
+      "tags": "cooking",
+      "created_at": 1784293305.4442654
+    },
+    {
+      "id": 1,
+      "content": "Meeting with Artem: AI router deadline is Friday",
+      "tags": "work,meetings",
+      "created_at": 1784293305.4411325
+    }
+  ]
+}

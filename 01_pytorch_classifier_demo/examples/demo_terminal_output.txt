@@ -1,0 +1,4 @@
+[perfect_predictions] n=6 brier=0.000000 ece=0.000000
+[confidently_wrong_predictions] n=4 brier=0.856250 ece=0.925000
+[trained_two_moons_model] n=400 brier=0.005497 ece=0.011445 val_acc=0.9925
+Report written to D:\codex tasks\rezume_git\01_pytorch_classifier_demo\examples\calibration_report.json

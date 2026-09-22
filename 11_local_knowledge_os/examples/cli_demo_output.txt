@@ -1,0 +1,26 @@
+$ python ingest.py --note "Meeting with Artem: AI router deadline is Friday" --tags work,meetings --store-dir demo/cli
+[warn] Chroma unavailable: No module named 'chromadb'
+[ingest] stored episode 1 with tags ['work', 'meetings']
+
+$ python ingest.py --note "Office address: Moscow, Lenina street 10" --tags work --store-dir demo/cli
+[warn] Chroma unavailable: No module named 'chromadb'
+[ingest] stored episode 2 with tags ['work']
+
+$ python ask.py "when is the router deadline" --store-dir demo/cli
+[warn] Chroma unavailable: No module named 'chromadb'
+[skip] LLM call failed: Connection error.
+[ask] [LLM unavailable]
+
+$ python compress_memory.py --days 0 --store-dir demo/cli
+[warn] Chroma unavailable: No module named 'chromadb'
+[compress] created 1 summary record(s)
+  За последние 0 дней: 2 записей. Теги: meetings, work.
+
+$ python benchmark_recall.py
+[warn] Chroma unavailable: No module named 'chromadb'
+  какая у меня машина                      -> FOUND
+  когда дедлайн по проекту с Артёмом       -> FOUND
+  из чего паста                            -> MISS
+  где офис                                 -> FOUND
+
+[benchmark] recall@3: 0.75

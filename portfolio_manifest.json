@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "quality_contract": ["real_user_problem", "distinct_offline_feature", "behavioral_test", "honest_limitations"],
+  "projects": [
+    {"id": 1, "dir": "01_pytorch_classifier_demo", "problem": "Know when a classifier is confidently wrong", "feature": "src/reliability.py", "proof": "test_01_calibration_perfect_predictions"},
+    {"id": 2, "dir": "02_huggingface_finetune_demo", "problem": "Prevent duplicates and train/validation leakage before tuning", "feature": "data_audit.py", "proof": "test_02_dataset_duplicates_and_leakage"},
+    {"id": 3, "dir": "03_langchain_rag_chat", "problem": "Find unsupported sentences in generated answers", "feature": "grounding.py", "proof": "test_03_grounding_flags_unsupported_claim"},
+    {"id": 4, "dir": "04_llamaindex_agent", "problem": "Give agents arithmetic without arbitrary code execution", "feature": "safe_math.py", "proof": "test_04_agent_math_rejects_python"},
+    {"id": 5, "dir": "05_ollama_local_llm", "problem": "Choose a local model using quality/speed trade-offs", "feature": "arena_scoring.py", "proof": "test_05_arena_ranking_explains_tradeoff"},
+    {"id": 6, "dir": "06_llamacpp_gguf_inference", "problem": "Make model benchmarks reproducible against exact artifacts", "feature": "model_integrity.py", "proof": "test_06_model_checksum"},
+    {"id": 7, "dir": "07_vllm_serving", "problem": "Report correct tail latency under small benchmark samples", "feature": "latency_stats.py", "proof": "test_07_percentile_uses_nearest_rank"},
+    {"id": 8, "dir": "08_dify_workflow_integration", "problem": "Review workflow changes without committing secrets", "feature": "workflow_contract.py", "proof": "test_08_contract_redacts_and_detects_breaking_change"},
+    {"id": 9, "dir": "09_comfyui_image_gen", "problem": "Trace generated media to an exact workflow and output", "feature": "provenance.py", "proof": "test_09_provenance_hashes_workflow_and_output"},
+    {"id": 10, "dir": "10_openhands_code_agent", "problem": "Stop unsafe or over-broad AI-generated repairs", "feature": "repair_policy.py", "proof": "test_10_repair_policy_blocks_dynamic_execution"},
+    {"id": 11, "dir": "11_local_knowledge_os", "problem": "Let users search, export, and permanently delete local memory", "feature": "knowledge_store.py", "proof": "test_11_memory_export_delete_and_top_k"},
+    {"id": 12, "dir": "12_local_voice_companion", "problem": "Avoid accidental wake-word activations", "feature": "wake_word.py", "proof": "test_12_wake_word_has_word_boundaries"},
+    {"id": 13, "dir": "13_local_finetuning_lab", "problem": "Create deterministic, duplicate-free tuning splits", "feature": "data_quality.py", "proof": "test_13_split_is_deterministic_and_leakage_safe"},
+    {"id": 14, "dir": "14_local_model_router", "problem": "Explain why a model was chosen or rejected", "feature": "decision.py", "proof": "test_14_router_explains_privacy_rejections"},
+    {"id": 15, "dir": "15_local_code_reviewer", "problem": "Feed private local review findings into CI", "feature": "reporting.py", "proof": "test_15_sarif_is_ci_compatible_and_stable"},
+    {"id": 16, "dir": "16_local_synthetic_data_factory", "problem": "Block PII and duplicates in generated datasets", "feature": "quality.py", "proof": "test_16_synthetic_quality_blocks_pii_and_duplicates"},
+    {"id": 17, "dir": "17_local_document_parser", "problem": "Trace extracted fields back to document evidence", "feature": "evidence.py", "proof": "test_17_extracted_fields_include_source_evidence"},
+    {"id": 18, "dir": "18_local_ai_observability", "problem": "Observe LLM traffic without storing raw private prompts", "feature": "policies.py", "proof": "test_18_observability_redacts_instead_of_logging_content"},
+    {"id": 19, "dir": "19_local_edge_fleet", "problem": "Route around failing edge nodes with bounded recovery", "feature": "scheduler.py", "proof": "test_19_circuit_breaker_and_weighted_load"},
+    {"id": 20, "dir": "20_local_redteam_arena", "problem": "Report safety uncertainty and exclude infrastructure errors", "feature": "safety_metrics.py", "proof": "test_20_safety_metrics_report_uncertainty_and_errors"},
+    {"id": 21, "dir": "21_universal_skill_forge", "problem": "Validate tool portability without calling a paid model", "feature": "portability.py", "proof": "test_21_portability_contract_is_offline"}
+  ]
+}

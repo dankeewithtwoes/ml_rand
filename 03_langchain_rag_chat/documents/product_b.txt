@@ -1,0 +1,1 @@
+Product B focuses on AI-powered automation. It uses large language models to classify support tickets, draft replies, and summarize long conversations. Key benefits include 24/7 availability and consistent response quality.

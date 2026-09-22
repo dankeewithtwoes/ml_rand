@@ -1,0 +1,13 @@
+# Offline-tested core (safety_metrics.py, report.py, compare_safety.py, the
+# tests in tests/ and the demo in examples/) runs on the Python standard
+# library alone. `requests` is needed by redteam.py (live endpoint calls) and
+# by the demo's dead-endpoint probe.
+requests==2.34.2
+pyyaml==6.0.3        # declared for experiment configs; not imported by the tested core
+
+# Optional heavy scientific stack (installed on the verification machine:
+# numpy 2.1.2, scikit-learn 1.8.0). Not imported by the tested core; reserved
+# for future judge/analysis extensions. Lower bounds only, safe to skip for
+# the offline demo and tests.
+numpy>=1.26.0
+scikit-learn>=1.5.0

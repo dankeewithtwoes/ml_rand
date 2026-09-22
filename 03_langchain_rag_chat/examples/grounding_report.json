@@ -1,0 +1,57 @@
+{
+  "evidence_sources": [
+    "product_a.txt",
+    "product_b.txt"
+  ],
+  "cases": [
+    {
+      "label": "supported answer",
+      "answer": "Product A is an analytics platform. Its benefits include real-time dashboards and low-latency queries.",
+      "grounded_sentence_ratio": 1.0,
+      "threshold": 0.35,
+      "sentences": [
+        {
+          "sentence": "Product A is an analytics platform.",
+          "coverage": 1.0,
+          "grounded": true
+        },
+        {
+          "sentence": "Its benefits include real-time dashboards and low-latency queries.",
+          "coverage": 1.0,
+          "grounded": true
+        }
+      ]
+    },
+    {
+      "label": "mixed answer with a hallucinated claim",
+      "answer": "Product B classifies support tickets with language models. Product B also offers a free tier with unlimited storage.",
+      "grounded_sentence_ratio": 0.5,
+      "threshold": 0.35,
+      "sentences": [
+        {
+          "sentence": "Product B classifies support tickets with language models.",
+          "coverage": 0.8571428571428571,
+          "grounded": true
+        },
+        {
+          "sentence": "Product B also offers a free tier with unlimited storage.",
+          "coverage": 0.25,
+          "grounded": false
+        }
+      ]
+    },
+    {
+      "label": "answer outside the evidence base",
+      "answer": "The platform was founded in 1998 and is headquartered in Oslo.",
+      "grounded_sentence_ratio": 0.0,
+      "threshold": 0.35,
+      "sentences": [
+        {
+          "sentence": "The platform was founded in 1998 and is headquartered in Oslo.",
+          "coverage": 0.25,
+          "grounded": false
+        }
+      ]
+    }
+  ]
+}

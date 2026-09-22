@@ -1,0 +1,9 @@
+topic: customer support
+fields:
+  - instruction: string
+  - output: string
+  - label: string
+constraints:
+  - instruction must be a realistic customer question
+  - output must be a polite and helpful support answer
+  - label must be one of [billing, technical, refund, general]

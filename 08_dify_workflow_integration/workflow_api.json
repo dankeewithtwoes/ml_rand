@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "description": "Placeholder Dify workflow DSL. Replace with real export from Dify Studio to version-control your workflow.",
+  "kind": "workflow",
+  "nodes": []
+}
