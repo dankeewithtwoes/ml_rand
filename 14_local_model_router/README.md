@@ -2,18 +2,9 @@
 
 ## Problem
 
-Teams that mix local models (Ollama, vLLM) with cloud APIs usually hardcode one
-model per feature — or worse, send every prompt to the cloud because that is the
-default in the tutorial they copied. Two things go wrong: sensitive prompts
-(passwords, contracts, personal data) quietly leave the machine, and when someone
-later asks *"why did this request go to GPT-4o?"* there is no answer, because the
-routing decision was never recorded, let alone justified.
+The router evaluates local and cloud model candidates using prompt intent, privacy constraints, cost, and latency metadata. It returns the selected model and the reasons other candidates were rejected.
 
-A router that only returns a model name is not enough for a privacy-sensitive
-deployment. You need the decision **and** the reasons every other candidate was
-rejected — that is what makes the routing policy auditable.
-
-## What it does
+## Implementation
 
 Given a registry of models described by metadata (`type`, `cost_per_1k_tokens`,
 `avg_latency_ms`, `strengths`), the router:
@@ -30,7 +21,7 @@ Given a registry of models described by metadata (`type`, `cost_per_1k_tokens`,
 5. optionally performs the live call through any OpenAI-compatible endpoint —
    and degrades gracefully to a `[skip]` message when no endpoint is reachable.
 
-The distinctive capability is step 3–4: `decision.py:choose()` returns
+The selection and rejection explanations are produced in step 3–4: `decision.py:choose()` returns
 `{"model", "reasons", "rejected": [{"model", "reasons"}]}`, so every routing
 decision can answer both "why this model?" and "why not that one?".
 
@@ -69,7 +60,7 @@ Offline-first: the routing engine, registry, benchmark, and tests need no model
 downloads, no GPU, and no API keys. Verified on this machine:
 
 ```bash
-pip install -r requirements.txt   # optional: the tested core is stdlib-only
+pip install -r requirements.txt   # optional: the routing logic uses the standard library
 
 # One-command demo: seeds a default registry, classifies, routes, explains
 python route.py --prompt "Rotate my database password and restart the service" --registry examples/registry.json
@@ -175,3 +166,4 @@ External integration layer: live model calls via the `openai` SDK against
 Ollama/vLLM/OpenAI-compatible endpoints. This layer is optional, is not covered
 by the offline tests, and was not exercised against a running endpoint on this
 machine — no claims are made about end-to-end latency or answer quality.
+
