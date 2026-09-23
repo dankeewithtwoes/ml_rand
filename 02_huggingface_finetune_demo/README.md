@@ -1,21 +1,13 @@
 # 02 — Parameter-Efficient Instruction Tuning (LoRA)
 
-> **Уникальный угол**: fine-tuning не всей модели, а только LoRA-адаптеров в instruction-формате. Показывает, как адаптировать большую модель под узкий домен, экономя память и время.
+Fine-tuning uses LoRA adapters in instruction format for text classification.
 
-## Что демонстрирует
+## Возможности
 
 - **PEFT / LoRA** для `AutoModelForSequenceClassification`.
 - **Instruction format** (`### Instruction`, `### Input`, `### Response`).
 - Оценку через **accuracy / F1 / classification report**.
 - Сравнение обучаемых параметров (`model.print_trainable_parameters()`).
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Full fine-tuning на sentiment | LoRA adapter, обучается <1% параметров |
-| CSV без формата | JSONL в instruction-формате |
-| Только accuracy | accuracy + F1 + classification report |
 
 ## Запуск
 
@@ -48,3 +40,4 @@ python infer.py --text "This product completely exceeded my expectations!"
 ├── infer.py                # инференс
 └── demo/model/             # сохранённый адаптер
 ```
+
