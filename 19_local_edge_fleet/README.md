@@ -1,22 +1,14 @@
 # 19 — Local Edge AI Fleet
 
-> **Уникальный угол**: распределённый inference на нескольких локальных/edge-устройствах с load balancing и failover, а не один мощный сервер.
+The system registers edge nodes, routes requests by load, and reroutes traffic when a node fails.
 
-## Что демонстрирует
+## Возможности
 
 - Регистрацию edge-нод (ПК, Jetson, Raspberry Pi).
 - Health-check и выбор ноды по загрузке.
 - Распределение запросов (round-robin / least-load).
 - Failover при падении ноды.
 - Метрики кластера.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Один инстанс | Кластер edge-устройств |
-| Ручное переключение | Авто-failover |
-| Нет мониторинга | device utilization, cluster throughput |
 
 ## Запуск
 
@@ -44,3 +36,4 @@ python benchmark_cluster.py
 [failover] jetson-1 down, switched to jetson-3 in 0.4s
 [benchmark] cluster throughput: 28 tok/s
 ```
+
