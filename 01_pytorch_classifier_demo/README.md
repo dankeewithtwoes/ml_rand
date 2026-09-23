@@ -1,16 +1,14 @@
 # PyTorch Classifier with Calibration Reporting
 
-A reproducible two-moons classifier training harness whose real subject is not accuracy but **confidence quality**: a calibration report (Brier score + expected calibration error) that tells you when a model is confidently wrong.
+Train a PyTorch classifier on the two-moons dataset and report probability calibration alongside accuracy. The report includes Brier score, expected calibration error (ECE), and per-bin confidence.
 
-## Problem — why it matters
+## Problem
 
-A classifier that reports 99% accuracy can still be dangerous if its probabilities are meaningless. In any downstream system that thresholds, routes, or abstains on confidence — fraud queues, medical triage, agent tool-use — an overconfident wrong prediction is worse than no prediction, because it suppresses human review exactly where review is needed.
+Accuracy does not show whether predicted probabilities match observed outcomes. This project reports Brier score, expected calibration error (ECE), and confidence by bin for that purpose.
 
-Accuracy alone cannot detect this. A model can be 99% accurate and still assign 0.99 probability to the wrong class on the 1% it misses. Calibration metrics (Brier score, expected calibration error over confidence bins) measure the gap between *how sure the model says it is* and *how often it is actually right*, which is the number a reliability-minded engineer needs before shipping a threshold.
+## Implementation
 
-## What it does
-
-- **Distinctive capability:** `src/reliability.py` — a dependency-free (stdlib-only) calibration report for binary classifiers. Given predicted probabilities and true labels it returns the Brier score, the expected calibration error (ECE), and per-bin confidence/accuracy buckets. It validates its input loudly (empty input, length mismatch, out-of-range probabilities, non-binary labels, non-positive bin counts are all rejected) instead of producing a silently misleading number.
+- **Tested module:** `src/reliability.py` — a dependency-free (stdlib-only) calibration report for binary classifiers. Given predicted probabilities and true labels it returns the Brier score, the expected calibration error (ECE), and per-bin confidence/accuracy buckets. It validates its input loudly (empty input, length mismatch, out-of-range probabilities, non-binary labels, non-positive bin counts are all rejected) instead of producing a silently misleading number.
 - **Main pipeline:** config-driven PyTorch training on a synthetic two-moons dataset with seeded reproducibility, a held-out stratified validation split, per-epoch metrics, decision-boundary plots, classification reports, one-off inference, and optional ONNX export / MLflow tracking.
 
 ## Architecture
@@ -38,7 +36,7 @@ Key modules:
 
 | File | Role |
 |---|---|
-| `src/reliability.py` | Calibration report — the tested core. Pure stdlib, no torch needed. |
+| `src/reliability.py` | Calibration report. Uses the Python standard library and does not require PyTorch. |
 | `src/data.py` | Two-moons generator; shuffles with the run seed *before* splitting (an ordered split would put a single class in validation — see Limitations). |
 | `src/model.py` | `TwoLayerNet`: two linear layers with ReLU. |
 | `train.py` | Hydra entry point; trains, checkpoints, plots, logs to MLflow if installed. |
@@ -81,7 +79,7 @@ Raw artifacts from these exact runs are committed:
 - [`examples/demo_terminal_output.txt`](examples/demo_terminal_output.txt) — terminal log of the full run;
 - [`examples/demo_terminal_output_stdlib.txt`](examples/demo_terminal_output_stdlib.txt) — terminal log of the zero-dependency quickstart run.
 
-Not run here (marked honestly rather than implied): ONNX export (`onnx` not installed in this environment) and MLflow UI (`mlflow` not installed; `train.py` auto-skips tracking when it is absent).
+Not covered by the included run: ONNX export (`onnx` not installed in this environment) and MLflow UI (`mlflow` not installed; `train.py` auto-skips tracking when it is absent).
 
 ## Tests
 
@@ -101,7 +99,7 @@ The portfolio-level proof test `test_01_calibration_perfect_predictions` lives i
 
 - **Fully local and offline:** the dataset is synthetic (generated in-process); no data is downloaded, uploaded, or sent to any API.
 - **No secrets, no PII:** inputs are 2-D Gaussian-noise moons and probability lists; there is nothing sensitive to leak.
-- **What it does NOT do:** no network calls, no file writes outside the project directory, no execution of external code, no persistence of anything beyond run artifacts (`demo/`, `examples/`, Hydra `outputs/`).
+- **Execution limits:** no network calls, no file writes outside the project directory, no execution of external code, no persistence of anything beyond run artifacts (`demo/`, `examples/`, Hydra `outputs/`).
 - **Trust boundary:** checkpoints are loaded with `weights_only=True`; still, only load `demo/model.pt` files you produced or reviewed — a `.pt` file is a pickle container.
 - **MLflow/ONNX are opt-in integrations**, not part of the tested core; enabling MLflow writes tracking files under the configured local directory only.
 
@@ -116,3 +114,4 @@ The portfolio-level proof test `test_01_calibration_perfect_predictions` lives i
 ## Tested core vs. integrations
 
 Per the portfolio positioning: the **tested core** is `src/reliability.py` plus the training/evaluation pipeline verified above on CPU. **External integrations** (MLflow tracking, ONNX export) are optional layers that were not exercised in this environment and are not claimed as tested.
+
