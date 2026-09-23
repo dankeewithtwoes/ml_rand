@@ -1,20 +1,12 @@
 # 06 — Quantization Benchmark
 
-> **Уникальный угол**: не инференс ради инференса, а **сравнительный бенчмарк квантизаций GGUF** (Q4_K_M, Q5_K_M, Q6_K) по скорости и качеству ответа.
+The scripts compare GGUF quantizations Q4_K_M, Q5_K_M, and Q6_K by speed and answer quality.
 
-## Что демонстрирует
+## Возможности
 
 - Скачивание моделей в локальный кэш.
 - Замеры **load time**, **generation time**, **tokens/sec**.
 - JSON-отчёт для выбора оптимального trade-off скорость/качество.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Один запуск одной модели | Сравнение нескольких квантизаций |
-| Нет метрик | tokens/sec, load/gen time |
-| Субъективная оценка | JSON-отчёт |
 
 ## Запуск
 
@@ -40,3 +32,4 @@ python benchmark_quant.py --models-dir models --max-tokens 128
 ...
 Saved demo/benchmark_quant.json
 ```
+
