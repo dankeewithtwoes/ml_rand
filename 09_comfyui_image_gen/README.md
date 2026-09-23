@@ -1,20 +1,12 @@
 # 09 — ComfyUI Batch Grid
 
-> **Уникальный угол**: не ручная генерация в UI, а **пакетная генерация с вариациями prompt и автоматическая сборка grid-изображения**.
+The script sends prompt variations to ComfyUI, assembles the outputs into a grid, and records generation settings in JSON.
 
-## Что демонстрирует
+## Возможности
 
 - Вызов ComfyUI API из Python.
 - Параметрические вариации prompt.
 - Сборка grid и метаданных JSON.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Одна картинка вручную | Batch + grid |
-| Параметры в UI | Параметры в CLI/коде |
-| Нет метаданных | JSON с prompt и путями |
 
 ## Запуск
 
@@ -39,3 +31,4 @@ Saved outputs/ComfyUI_00002_.png
 ...
 Grid saved outputs/grid.jpg
 ```
+
