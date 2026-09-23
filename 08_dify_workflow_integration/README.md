@@ -1,20 +1,12 @@
 # 08 — Dify Workflow-as-Code
 
-> **Уникальный угол**: интеграция с Dify не через клики, а через **CLI + версионирование workflow JSON** в Git.
+The CLI calls the Dify Chatbot and Workflow APIs; workflow JSON can be versioned and reviewed in Git.
 
-## Что демонстрирует
+## Возможности
 
 - Чат с Dify Chatbot API.
 - Запуск Workflow app с параметрами.
 - Экспорт/импорт workflow DSL для версионирования.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| UI-конфигурация | CLI + код |
-| Workflow живёт только в Dify | Workflow версионируется в Git |
-| Нет интеграции с CI | JSON-экспорт пригоден для code review |
 
 ## Запуск
 
@@ -46,3 +38,4 @@ python export_workflow.py --base-url http://localhost/v1 --api-key $DIFY_API_KEY
   "workflow_run_id": "..."
 }
 ```
+
