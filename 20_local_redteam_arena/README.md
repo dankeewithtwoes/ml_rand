@@ -1,16 +1,14 @@
 # Local Red-Team Arena
 
-Local adversarial testing for LLMs that reports **calibrated safety statistics**: every attack success rate ships with a Wilson score confidence interval, and infrastructure failures (endpoint down, timeouts) are excluded from the denominator and counted separately instead of being silently scored as "model behaved safely".
+A local red-team runner for OpenAI-compatible endpoints. Reports attack success rates with Wilson confidence intervals and counts endpoint errors separately.
 
 ## Problem
 
-"Model A is safer than model B" is usually decided with a handful of ad-hoc prompts and a point estimate. Two things corrupt that claim. First, small samples: 3 jailbreaks out of 10 prompts is 0.30, but the 95% Wilson interval is [0.07, 0.65] — wide enough to flip most rankings, and almost nobody reports it. Second, infrastructure noise: when the endpoint is down or a request times out, naive tooling records a failed request as "attack unsuccessful", which is indistinguishable from "model refused". A completely dead server then produces a perfect-looking safety report.
+Small prompt sets make safety rates uncertain, and endpoint failures should not count as safe refusals. This project runs against a local OpenAI-compatible endpoint, reports Wilson confidence intervals, and tracks infrastructure errors separately.
 
-Doing this against a hosted API also means sending adversarial prompts to a third party and trusting its judge. This project keeps the whole loop — prompts, responses, scoring — on the local machine against a local OpenAI-compatible server (e.g. Ollama).
+## Implementation
 
-## What it does
-
-Distinctive capability (`safety_metrics.py`): given raw red-team records, it
+In safety_metrics.py: given raw red-team records, it
 
 - drops every record whose response starts with `[error` (infrastructure failure) into a separate `excluded_errors` count — never into the success/failure denominator;
 - reports the attack success rate over **valid** records only, with a Wilson score 95% confidence interval (`attack_success_ci95`), so a claim always carries its sample size and uncertainty;
@@ -19,7 +17,7 @@ Distinctive capability (`safety_metrics.py`): given raw red-team records, it
 Pipeline around it:
 
 1. `redteam.py` — built-in attack template library (jailbreak / toxicity / fuzzing), sends prompts to any OpenAI-compatible endpoint, classifies responses with local refusal/toxicity heuristics, writes raw JSON records.
-2. `safety_metrics.py` — calibrated statistics over those records (the tested core).
+2. `safety_metrics.py` — calibrated statistics over those records.
 3. `compare_safety.py` — runs several local models and ranks them with uncertainty-aware safety scores.
 4. `report.py` — renders a run into a human-readable Markdown safety report.
 
@@ -93,7 +91,7 @@ Live multi-model benchmarks against Ollama were **not run here** (no model serve
 python -m unittest discover -s tests -v     # 13 tests, all passing on the machine above
 ```
 
-Coverage of the distinctive capability (`tests/test_safety_metrics.py`):
+Coverage of the metric checks (`tests/test_safety_metrics.py`):
 
 - **Happy path** — mixed refused/penetrated/error records: correct `evaluated`/`excluded_errors` counts, rate over valid records only, point estimate bracketed by the CI; Wilson interval matches the textbook reference value for 50/100 ([0.4038, 0.5962]).
 - **Failure modes** — empty input returns a zero report without raising; an all-infrastructure-error run reports `evaluated=0` instead of a fake-perfect 0.0 success rate; non-positive totals return a degenerate `(0.0, 0.0)` interval; interval bounds stay clamped to [0, 1] at 0% and 100% success.
@@ -125,3 +123,4 @@ The portfolio-level proof test `test_20_safety_metrics_report_uncertainty_and_er
 ## License
 
 MIT (see repository root).
+
