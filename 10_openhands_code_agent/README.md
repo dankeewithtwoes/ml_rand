@@ -1,27 +1,14 @@
 # 10 — Test-Driven Repair Agent with a Safety Gate
 
-An LLM-driven loop that repairs Python code against failing pytest suites — with a
-static safety gate (`repair_policy.py`) that every model-generated patch must pass
-before it is allowed to touch the source file.
+The repair loop asks an LLM to address failing pytest cases. Before a patch is written, `repair_policy.py` checks its syntax, calls, and change size.
 
-## Problem — why it matters
+## Problem
 
-Letting an LLM rewrite source files unattended is risky in two specific ways. First,
-models occasionally emit dynamic-execution calls (`eval`, `exec`, `__import__`) —
-sometimes as a "clever" fix, sometimes because the prompt or context was manipulated;
-executed inside a repo, that is arbitrary code execution with the developer's
-credentials. Second, models tend to over-edit: asked to fix a one-line bug, they
-happily rewrite the whole file, destroying reviewability and introducing regressions
-that tests may not cover.
+Automated patches can contain invalid syntax, dangerous calls, or unrelated edits. The policy checks each candidate before writing it and leaves the source unchanged when a check fails.
 
-Most "AI fixes your code" demos apply whatever the model returns. This project treats
-the model output as an untrusted artifact: every candidate patch is parsed, screened,
-and budget-checked before it is written to disk, and rejected candidates leave the
-working tree untouched.
+## Implementation
 
-## What it does
-
-- **Safety gate for AI-generated repairs** (the distinctive capability):
+- **Repair policy:**
   `repair_policy.validate_candidate(original, candidate, max_changed_lines=80)`
   checks every proposed patch for
   1. **syntax validity** — the candidate must parse as Python (`ast.parse`);
@@ -133,3 +120,4 @@ design** — it is the buggy fixture the repair loop works on, not a project tes
   still be wrong; the pytest loop is the second check.
 - Repair quality depends entirely on the backing LLM; the benchmark dataset is
   three synthetic bugs, illustrative rather than representative.
+
