@@ -1,22 +1,14 @@
 # 16 — Local Synthetic Data Factory
 
-> **Уникальный угол**: генерация синтетических датасетов **полностью локально** по схеме, с контролем diversity и coverage, без утечки данных в API.
+The tool generates records from a schema, checks field coverage and duplicates, and exports JSONL or CSV.
 
-## Что демонстрирует
+## Возможности
 
 - Задание схемы данных (persona, scenario, QA, JSON).
 - Генерацию через локальную LLM.
 - Проверку покрытия схемы и дедупликацию.
 - Оценку качества через downstream задачу.
 - Экспорт в JSONL/CSV.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Пара примеров | Фабрика с контролем качества |
-| Нет метрик | schema coverage, diversity, downstream accuracy |
-| Ручная генерация | CLI pipeline |
 
 ## Запуск
 
@@ -51,3 +43,4 @@ python -m unittest test_generate_qa.py -v
 [validate] schema coverage=0.96 diversity=0.82
 [benchmark] downstream accuracy=0.79
 ```
+
