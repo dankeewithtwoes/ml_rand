@@ -1,22 +1,14 @@
 # 13 — Local Fine-tuning Lab
 
-> **Уникальный угол**: не хаотичный ноутбук, а **автоматизированная лаборатория дообучения** LoRA на потребительском GPU с подбором гиперпараметров, квантованием и деплоем.
+The pipeline covers data preparation, LoRA training, evaluation, GGUF export, and local inference.
 
-## Что демонстрирует
+## Возможности
 
 - Загрузку и валидацию собственных данных.
 - Авто-подбор LoRA rank/learning rate.
 - Обучение с валидацией и логированием.
 - Merge adapter + квантование GGUF.
 - Локальный деплой через llama.cpp.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Одно ручное обучение | Pipeline: данные → train → eval → quant → deploy |
-| Фиксированные гиперпараметры | Авто-подбор rank/LR |
-| Без метрик | val loss, perplexity, peak VRAM |
 
 ## Запуск
 
@@ -44,3 +36,4 @@ python benchmark_training.py
 [lab] val_loss=0.87 perplexity=2.39 peak_vram=6.2GB
 [quant] saved outputs/merged-q4_k_m.gguf
 ```
+
