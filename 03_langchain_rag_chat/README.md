@@ -1,16 +1,16 @@
 # 03 — Sentence-Grounded Hybrid RAG
 
-Retrieval-augmented generation answers questions over local documents, then checks **which sentences of the answer are actually supported by the retrieved evidence**.
+This project retrieves passages from local documents and checks which answer sentences have lexical support in those passages.
 
-## Problem → why it matters
+## Problem
 
 RAG systems reduce hallucination but do not eliminate it: the model can still blend retrieved facts with plausible-sounding claims that appear nowhere in the source documents. When such a system answers a real user, the failure is silent — the answer reads fluently whether it is grounded or not, so nobody notices the invented sentence until it causes a wrong decision.
 
 The standard fix is an LLM-as-a-judge faithfulness score, which adds cost, latency, another model to trust, and usually a network call. This project takes the cheaper first step: a deterministic, offline, sentence-level grounding check that flags exactly which claims in a generated answer lack support in the retrieved context — so unsupported sentences can be shown to a human, filtered, or logged before the answer is trusted.
 
-## What it does
+## Implementation
 
-**Distinctive capability (tested core):** `grounding.py` — sentence-level grounding with no LLM judge. It splits an answer into sentences, measures the share of each sentence's terms that appear in the retrieved evidence, and flags every sentence below the coverage threshold as an unsupported claim. Pure standard library: no model downloads, no GPU, no network.
+**Tested module:** `grounding.py` — sentence-level grounding with no LLM judge. It splits an answer into sentences, measures the share of each sentence's terms that appear in the retrieved evidence, and flags every sentence below the coverage threshold as an unsupported claim. Pure standard library: no model downloads, no GPU, no network.
 
 **Main pipeline (optional, heavy dependencies):** a hybrid retrieval stack — BM25 + dense embeddings (`EnsembleRetriever`) over a persistent Chroma index, cross-encoder reranking (`ms-marco-MiniLM-L-6-v2`), and RAGAS-style proxy metrics (context precision, answer relevancy, faithfulness) in `evaluate_rag.py`. Answers come from any OpenAI-compatible endpoint or a local Ollama model.
 
@@ -18,7 +18,7 @@ The standard fix is an LLM-as-a-judge faithfulness score, which adds cost, laten
 
 | Module | Role | Dependencies |
 |---|---|---|
-| `grounding.py` | sentence-level evidence coverage (the tested core) | stdlib only |
+| `grounding.py` | sentence-level evidence coverage | stdlib only |
 | `examples/grounding_demo.py` | offline demo → `examples/grounding_report.json` | stdlib only |
 | `rag_engine.py` | `HybridRAG`: loaders → chunks → BM25 + Chroma ensemble → rerank → LLM | langchain, chromadb, sentence-transformers |
 | `rag_chat.py` | CLI chat over the hybrid engine | pipeline deps |
@@ -108,3 +108,4 @@ The portfolio-level proof test `test_03_grounding_flags_unsupported_claim` lives
 - Sentence splitting is regex-based; abbreviations and decimals can split oddly.
 - The default threshold (0.35) is a heuristic and should be tuned per domain.
 - Only the grounding core is integration-tested here; the langchain/Chroma/reranker pipeline is exercised by compilation checks and by structure, not by an end-to-end run on this machine.
+
