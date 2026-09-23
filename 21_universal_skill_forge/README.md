@@ -2,15 +2,13 @@
 
 Provider-neutral, testable Python tools for AI agents. A skill is a tiny local package — a semantic-versioned manifest, a JSON Schema input contract, deterministic examples, and a handler — that you write once, validate offline, and then expose to Ollama or any OpenAI-compatible provider.
 
-## The problem
+## Problem
 
-Giving an LLM agent a new tool today usually means editing framework-specific glue code and then discovering at call time — after paying for tokens — that the model rejected the tool schema, the name violated the provider's naming rules, or the arguments failed validation. The feedback loop is slow, costs money per iteration, and differs across providers, so a tool that works against one endpoint silently breaks against another.
+Agent tool definitions can fail when a provider rejects a name, schema, or argument. Skill Forge validates manifests and JSON Schema locally, runs bundled examples as tests, and checks a subset of provider constraints without making model calls.
 
-Skill Forge moves that feedback loop entirely offline. Schemas are validated against JSON Schema Draft 2020-12 before any model is involved, every skill ships executable examples that run as unit tests, and a portability contract checks each tool definition against the constraints that OpenAI-compatible providers actually enforce — without a single network call or paid token.
+## Implementation
 
-## What it does
-
-The distinctive capability: **an offline two-provider portability contract** (`portability.py`). For each skill it verifies, without calling any model, that:
+Offline portability check: **an offline two-provider portability contract** (`portability.py`). For each skill it verifies, without calling any model, that:
 
 - the tool name matches the published OpenAI function-name pattern (`^[a-zA-Z0-9_-]{1,64}$`) — the same rules Ollama's OpenAI-compatible endpoint applies;
 - the input schema is a JSON object, as function-calling APIs require;
@@ -38,7 +36,7 @@ Pure Python 3.12, one hard dependency (`jsonschema`). No network, no GPU, no mod
 |---|---|
 | `skill.py` | `Skill` package loader: manifest/schema validation, discovery, sandboxed-per-process handler import |
 | `skillforge.py` | CLI: `create`, `list`, `inspect`, `test`, `run`, `doctor` — all JSON-emitting |
-| `portability.py` | Offline two-provider portability contract (the distinctive feature) |
+| `portability.py` | Offline two-provider portability contract (the portability check) |
 | `runtime.py` | Optional adapters: converts skills to OpenAI function-tool format, calls Ollama/OpenAI-compatible endpoints |
 | `benchmark_portability.py` | Optional benchmark across live model endpoints (requires a running provider) |
 | `demo_portability.py` | One-command offline demo; writes `examples/portability_report.json` |
@@ -129,3 +127,4 @@ python -m unittest discover -s tests -v
 ## Tested core vs external integrations
 
 Tested offline and covered by the suite: skill packaging, discovery, schema validation, deterministic example tests, the CLI, the two-provider portability contract, and the weather HTTP parsing/error contract with mocked responses. Live Open-Meteo availability and live Ollama/OpenAI calls are external integrations and are not asserted by the offline suite.
+
