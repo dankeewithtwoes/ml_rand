@@ -1,28 +1,14 @@
 # 11 — Local Knowledge OS
 
-User-owned long-term memory for a personal AI stack: every note is stored locally,
-and the user can **search it, export all of it to portable JSON, and permanently
-delete any of it** — the three operations cloud assistants make hard on purpose.
+A local memory store backed by SQLite. It supports search, JSON export, and deletion; an optional vector backend can be enabled separately.
 
-## Problem — why it matters
+## Problem
 
-Personal AI assistants accumulate the most sensitive data a person produces:
-meetings, addresses, drafts, ideas. In hosted products this memory lives on someone
-else's infrastructure, exports are partial at best, and "delete" usually means
-"flagged as deleted". If a local-first AI stack is going to keep long-term memory,
-that memory needs the same guarantees a file system gives you: you can read all of
-it, take all of it with you, and erase any part of it for real.
+Memory is stored in a local SQLite database. The store supports search, full JSON export, and deletion; tests cover these operations with and without the optional vector backend.
 
-This project is the memory layer of that stack. It treats retention as a user
-decision, not a platform decision: storage is a plain SQLite file you can open with
-any tool, export is a complete JSON dump, and delete removes the row (and the
-vector entry, when the optional vector backend is in use) — verified by tests,
-not by policy text.
+## Implementation
 
-## What it does
-
-Distinctive capability: **search, export, and permanently delete local memory** —
-a full lifecycle over a personal knowledge store, working entirely offline.
+The test suite covers the search, export, and deletion operations.
 
 - `add` — store a note with tags and a timestamp; empty content is rejected.
 - `query(question, top_k)` — semantic search via ChromaDB when installed, with an
@@ -120,7 +106,7 @@ python -m unittest test_knowledge_store -v     # from this directory
 ```
 
 `test_knowledge_store.py` (9 tests, unittest — same style as the portfolio root
-suite) covers the distinctive capability:
+suite) covers search, export, and deletion:
 
 - Happy path: add → query with `top_k` → export → delete, including search-hit
   ordering, `top_k` enforcement, and a deleted episode disappearing from both
@@ -167,3 +153,4 @@ unchanged.
   store is not a multi-tenant service and has no access control.
 - Export format is versioned (v1) but there is no import/merge tool yet —
   export is a one-way portability guarantee today.
+
