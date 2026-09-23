@@ -7,20 +7,11 @@ hash, never the raw text.
 
 ## Problem
 
-Teams running local LLMs still need observability — latency, block rates,
-which model was called — but the usual answer is a SaaS tracer (LangSmith,
-Helicone, etc.) that receives the full prompt and response. For private
-workloads that defeats the point of going local: employee data, customer
-messages, and secrets end up in someone else's database.
+Storing full prompts in logs can expose private data. This proxy keeps request metadata while omitting raw prompt text from its trace records.
 
-Even a self-hosted logger usually stores raw prompts "for debugging", which
-quietly recreates the same privacy liability on your own disk. The interesting
-question is not "can we log LLM calls?" but **"can we observe traffic while
-making it structurally impossible for raw private prompts to persist?"**
+## Implementation
 
-## What it does
-
-The distinctive capability is **privacy-preserving traces** (`policies.py`):
+The proxy writes traces (`policies.py`):
 
 - `redact(text)` replaces emails, phone numbers, and API keys with typed
   placeholders (`[EMAIL_REDACTED]`, ...) and returns findings with offsets —
@@ -172,3 +163,4 @@ exercised against a mock target (`run_demo.py`, `test_policies.py`). The
 integration layer — pointing the proxy at a real Ollama/vLLM endpoint and
 using Presidio for ML-based PII detection — is optional, requires those
 services/packages installed, and was not part of the verified runs above.
+
