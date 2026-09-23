@@ -1,21 +1,13 @@
 # 04 — Stateful Router Agent (LlamaIndex)
 
-> **Уникальный угол**: агент с **долгой памятью**, **router-логикой** и **graceful fallback**. Если вопрос не подходит под внутренние инструменты, агент явно переключается на живой keyless-поиск.
+The agent keeps chat context, selects a tool for each request, and falls back to search when no tool matches.
 
-## Что демонстрирует
+## Возможности
 
 - **ReAct agent** с несколькими function tools.
 - **ChatMemoryBuffer** для многоходовых диалогов.
 - **Router**: LLM сам выбирает между company_docs, inventory, calculator, fallback.
 - **Graceful degradation**: нет подходящего инструмента → живой поиск или явная ошибка провайдера.
-
-## Почему это отличается от туториала
-
-| Обычный туториал | Этот проект |
-|------------------|-------------|
-| Одношаговый агент | Многоходовый агент с памятью |
-| Фиксированный набор tools | Router + fallback tool |
-| Падение при неизвестном вопросе | Graceful fallback |
 
 ## Запуск
 
@@ -62,3 +54,4 @@ instant-answer API, а не полный индекс поисковой выд�
 ```bash
 python -m unittest test_web_search.py -v
 ```
+
