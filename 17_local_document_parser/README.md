@@ -6,23 +6,11 @@ OCR, no hosted LLM, no data leaving the machine.
 
 ## Problem
 
-Structured extraction from invoices, forms, and scans is usually done by
-sending documents to a cloud API — a non-starter for contracts, medical, or
-financial data. Running a local LLM instead solves the privacy problem but
-creates a trust problem: LLMs hallucinate values, and a wrong "total due" in
-a downstream system is indistinguishable from a correct one.
+The parser extracts fields from document text and records the source offsets and quote for each value. Values not found in the source are marked `grounded: false`; `evidence_coverage` reports the share of fields with supporting text.
 
-The fix this project demonstrates is **evidence tracing**: every extracted
-field carries the exact character offsets and the verbatim quote it was
-derived from. A field whose value does not appear in the source text is
-flagged `grounded: false` instead of silently passing through, and an
-`evidence_coverage` score tells you what fraction of the output is anchored
-in the document. Verification becomes a cheap substring check instead of a
-manual re-read of the whole document.
+## Implementation
 
-## What it does
-
-- **Distinctive capability** (`evidence.py`): for each extracted field,
+- **Tested behavior** (`evidence.py`): for each extracted field,
   locate the value in the source text and attach `{start, end, quote}` plus
   a `grounded` flag; `evidence_coverage()` aggregates the grounded fraction.
 - **Main pipeline** (`parse.py`): read a document (PDF via PyMuPDF, local
@@ -61,7 +49,7 @@ Key modules:
 
 | Module | Role |
 |---|---|
-| `evidence.py` | Distinctive feature: offsets, quotes, grounding, coverage |
+| `evidence.py` | Evidence fields: offsets, quotes, grounding, coverage |
 | `rules.py` | Deterministic offline `Key: Value` extractor |
 | `parse.py` | CLI pipeline: input → extract → ground → JSON |
 | `batch_parse.py` | Directory-level PDF batch parsing |
@@ -180,3 +168,4 @@ is unchanged and green via the root `quality_gate.py`.
   on scan resolution, skew, typography, and installed language data.
 - Matching is case-insensitive but literal — paraphrased or reformatted
   values (e.g. `$1,204.50` vs `1204.5`) will not ground.
+
