@@ -20,9 +20,9 @@ useful middle ground for small samples is the **nearest-rank** method: the p99
 of n samples is the `ceil(0.99 * n)`-th ordered observation. Every reported
 number is a latency some real request actually had.
 
-## What it does
+## Implementation
 
-- **Distinctive capability (tested core, stdlib-only):** `latency_stats.py`
+- **Tested module (standard library):** `latency_stats.py`
   implements nearest-rank percentiles and a `summarize()` report
   (count/mean/p50/p95/p99/max). Wrong quantiles raise, empty samples degrade to
   a documented `0.0` sentinel instead of crashing a benchmark report.
@@ -152,3 +152,4 @@ repository root.
 - `summarize()` signals empty input with `0.0` sentinels rather than raising —
   callers must check `count`.
 - Benchmark requests have no timeout/retry; a hung server fails the whole run.
+
