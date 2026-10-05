@@ -1,19 +1,13 @@
-# Contributing
+# Изменения в проекте
 
-Thanks for improving the local-first AI portfolio.
+Зависимости конкретной модели или сервиса оставляйте в её каталоге. При изменении поведения добавьте проверку основного сценария и ошибок. Для результатов измерений указывайте команду, версии ПО, модель, данные и оборудование.
 
-1. Pick one project and describe the user problem in the issue.
-2. Keep optional heavyweight dependencies isolated to that project.
-3. Add a deterministic test or benchmark fixture for every behavior change.
-4. Record commands, environment, model version, and hardware for performance claims.
-5. Never commit API keys, private documents, model weights, or generated personal data.
+Не добавляйте ключи, личные документы и частные датасеты. Сохранённые примеры должны быть пригодны для публикации.
 
-Run before opening a pull request:
+Перед pull request выполните из корня:
 
 ```bash
-python run_all_smoke_tests.py
-cd 21_universal_skill_forge
-python -m unittest discover -s tests -v
+python quality_gate.py
 ```
 
-Small, evidence-backed pull requests are preferred over broad framework rewrites.
+Зависимости веб-тестов находятся в `requirements-web.txt`; для Skill Forge нужен `jsonschema`, для выбранных тестов — `pytest`, `httpx` и `httpx2`. Установите их в отдельное виртуальное окружение. При изменении конкретного модуля запустите и его тесты.

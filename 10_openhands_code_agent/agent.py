@@ -89,9 +89,9 @@ def main(source_file: Path, test_file: Path, output_file: Path, model: str):
         ok, output = run_tests(test_file)
         print(output)
         if ok:
-            print("✅ All tests pass.")
+            print("All tests pass.")
         else:
-            print("❌ Tests still fail.")
+            print("Tests still fail.")
     finally:
         # Restore original
         source_file.rename(output_file)

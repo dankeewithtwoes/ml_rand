@@ -1,18 +1,18 @@
 ---
 name: Bug report
-about: Reproducible defect in a portfolio project
-title: "[bug] <project>: <short summary>"
+about: Ошибка в одном из проектов
+title: "[bug] <project>: <summary>"
 labels: bug
 ---
 
-**Project** (e.g. 11_local_knowledge_os):
+Проект:
 
-**Command you ran**:
+Команда или шаги воспроизведения:
 
-**Expected behavior**:
+Ожидаемый результат:
 
-**Actual behavior** (paste the error/output):
+Фактический результат и сообщение об ошибке:
 
-**Environment** (run `python -c "import platform; print(platform.platform(), platform.python_version())"`):
+ОС, версия Python и зависимости:
 
-**Offline?** Confirm the reproduction does not require a paid API key or GPU. If it does, this is probably an integration issue — say so explicitly.
+Если нужны модель, GPU или внешний сервис, укажите их настройки без ключей доступа.

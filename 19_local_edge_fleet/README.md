@@ -1,39 +1,19 @@
-# 19 — Local Edge AI Fleet
+# Маршрутизация между узлами инференса
 
-The system registers edge nodes, routes requests by load, and reroutes traffic when a node fails.
-
-## Возможности
-
-- Регистрацию edge-нод (ПК, Jetson, Raspberry Pi).
-- Health-check и выбор ноды по загрузке.
-- Распределение запросов (round-robin / least-load).
-- Failover при падении ноды.
-- Метрики кластера.
+FastAPI-сервисы описывают узлы и оркестратор запросов. scheduler.py учитывает нагрузку и cooldown после сбоя; клиент обращается к общему endpoint. benchmark_cluster.py измеряет статусы, задержки и успешные запросы в секунду.
 
 ## Запуск
 
+Команды выполняются из этой папки.
+
 ```bash
 pip install -r requirements.txt
-
-# Запустить ноду
 python node.py --name jetson-1 --port 9001 --model http://localhost:11434
-
-# Запустить оркестратор
 python orchestrator.py --nodes nodes.yaml --port 9090
-
-# Отправить запрос в кластер
 python client.py --url http://localhost:9090 --prompt "Explain quantization."
-
-# Бенчмарк failover
 python benchmark_cluster.py
 ```
 
-## Ожидаемый результат
+## Ограничения
 
-```
-[orchestrator] 3 nodes registered
-[route] -> jetson-2 (load=0.3)
-[failover] jetson-1 down, switched to jetson-3 in 0.4s
-[benchmark] cluster throughput: 28 tok/s
-```
-
+Нужны доступные узлы, корректный nodes.yaml и серверы моделей. Названия Jetson/Raspberry Pi в примерах не подтверждают запуск на таком оборудовании. Тесты планировщика не проверяют физический кластер; benchmark_cluster.py не измеряет tokens/sec.

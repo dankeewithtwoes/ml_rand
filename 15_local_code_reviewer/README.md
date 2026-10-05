@@ -1,36 +1,17 @@
-# 15 — Local Secure Code Reviewer
+# Проверка кода локальной моделью
 
-The tool scans files and git diffs, checks for selected issue classes, and writes a JSON report for CI.
-
-## Возможности
-
-- Анализ git diff и полных файлов.
-- Поиск уязвимостей (SQL-injection, path traversal, eval, hardcoded secrets).
-- Оценку рисков и explanation.
-- Сравнение с semgrep/bandit.
-- JSON-отчёт для CI.
+review.py анализирует файл или git diff и формирует список замечаний через локальный LLM endpoint. reporting.py создаёт JSON/SARIF для последующей обработки.
 
 ## Запуск
 
+Команды выполняются из этой папки.
+
 ```bash
 pip install -r requirements.txt
-
-# Проверить diff
 python review.py --diff HEAD~1
-
-# Проверить файл
 python review.py --file app.py
-
-# Сравнить с semgrep
-python benchmark_vs_static.py --target src/
 ```
 
-## Ожидаемый результат
+## Ограничения
 
-```
-[review] 3 issues found
-  HIGH: possible SQL injection in login() at line 42
-  MED: hardcoded API key at line 18
-[benchmark] precision=0.84 recall=0.71 vs semgrep
-```
-
+Замечания модели требуют проверки. benchmark_vs_static.py использует небольшие синтетические примеры; полноценного сравнения с Semgrep/Bandit в нём нет. Показатели precision и recall без отдельного запуска не заявлены. Код передаётся на настроенный endpoint.

@@ -45,7 +45,7 @@ class PortfolioWebTests(unittest.TestCase):
     def test_static_ui_is_served(self):
         page = self.client.get("/")
         self.assertEqual(200, page.status_code)
-        self.assertIn("21 инструментарий", page.text)
+        self.assertIn("21 проект", page.text)
 
 
 if __name__ == "__main__":

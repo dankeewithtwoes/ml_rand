@@ -1,34 +1,18 @@
-# 09 — ComfyUI Batch Grid
+# Генерация изображений через ComfyUI
 
-The script sends prompt variations to ComfyUI, assembles the outputs into a grid, and records generation settings in JSON.
-
-## Возможности
-
-- Вызов ComfyUI API из Python.
-- Параметрические вариации prompt.
-- Сборка grid и метаданных JSON.
+Python-клиент отправляет workflow в ComfyUI, получает изображения и собирает сетку вариантов. provenance.py записывает хеши workflow и выходных файлов для сопоставления запуска с результатом.
 
 ## Запуск
 
+Команды выполняются из этой папки.
+
 ```bash
 pip install -r requirements.txt
-
-# Убедитесь, что ComfyUI запущен (по умолчанию http://127.0.0.1:8188)
-
-# Одна генерация
 python generate.py --prompt "a robot reading a book, digital art" \
   --server http://127.0.0.1:8188 --output-dir outputs
-
-# Batch grid
 python batch_grid.py --server http://127.0.0.1:8188 --output-dir outputs --grid outputs/grid.jpg
 ```
 
-## Ожидаемый результат
+## Ограничения
 
-```
-Saved outputs/ComfyUI_00001_.png
-Saved outputs/ComfyUI_00002_.png
-...
-Grid saved outputs/grid.jpg
-```
-
+Нужны работающий ComfyUI, веса и узлы из workflow_api.json. Хеши подтверждают совпадение файлов, но не качество изображений. Время генерации зависит от оборудования и workflow.

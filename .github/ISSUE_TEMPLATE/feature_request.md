@@ -1,16 +1,16 @@
 ---
 name: Feature request
-about: Improvement that keeps the local-first contract
-title: "[feat] <project>: <short summary>"
+about: Предложение для проекта
+title: "[feat] <project>: <summary>"
 labels: enhancement
 ---
 
-**Project**:
+Проект:
 
-**User problem it solves** (not "would be nice"):
+Какую задачу нужно решить:
 
-**Proposed behavior**:
+Предлагаемое поведение:
 
-**How it stays verifiable offline** (behavioral test idea, no paid API/GPU required for the core path):
+Как проверить результат:
 
-**Trade-offs / honest limitations**:
+Необходимые зависимости и ограничения:

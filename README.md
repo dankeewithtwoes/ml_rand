@@ -1,46 +1,40 @@
-# Local-First AI Engineering Portfolio
+# ML-проекты
 
-This repository contains 21 projects covering local ML and LLM workflows: training, retrieval, inference, routing, evaluation, and privacy. Some demos depend on external APIs, models, or hardware; the offline checks do not validate those integrations.
+21 учебный проект на Python: обучение классификаторов, LoRA, RAG, локальный инференс, агенты и обработка данных. В каждом каталоге есть код, зависимости и команды запуска. Проекты запускаются отдельно.
 
-## Start here
+## Веб-интерфейс
 
-| Project | Focus | Check |
-|---|---|---|
-| [Universal Skill Forge](./21_universal_skill_forge) | Portable tool schemas for agents | Offline schema and portability checks |
-| [Local Knowledge OS](./11_local_knowledge_os) | Searchable local memory | Search, export, and deletion tests |
-| [Local Model Router](./14_local_model_router) | Privacy, cost, and latency rules | Selection and rejection reasons |
-| [AI Observability Guard](./18_local_ai_observability) | Traces without raw prompt text | Redaction and trace tests |
-| [Red-Team Arena](./20_local_redteam_arena) | Safety evaluation | Confidence intervals and error accounting |
-| [Evaluated RAG](./03_langchain_rag_chat) | Evidence checks for generated answers | Sentence-level grounding test |
-| [Code repair agent](./10_openhands_code_agent) | Guarded automated code changes | Patch safety checks |
-| [vLLM serving](./07_vllm_serving) | Small-sample latency statistics | Nearest-rank percentile tests |
-| [Document parser](./17_local_document_parser) | Source references for extracted fields | Evidence offset tests |
+Общий интерфейс показывает примеры функций из всех проектов, принимает JSON и сохраняет историю в SQLite. Он запускает отдельные функции; обучение больших моделей и внешние сервисы настраиваются отдельно.
 
-## Run the offline checks
+Из корня репозитория:
 
-From the repository root:
+```bash
+python -m venv .venv
+```
 
-    python quality_gate.py
-    cd 21_universal_skill_forge
-    pip install -r requirements.txt
-    python -m unittest discover -s tests -v
-    python skillforge.py doctor
+Активируйте `.venv`: `source .venv/bin/activate` на Linux/macOS или `.venv\Scripts\Activate.ps1` в PowerShell. Затем:
 
-The root gate checks the 21 local contracts, compiles Python entry points, and runs the portfolio tests. It does not test every model, API, GPU, or operating system integration.
+```bash
+python -m pip install -r requirements-web.txt
+python portfolio_app.py --open
+```
 
-Demo files are kept in each project's demo/, examples/, or docs/ directory. The GitHub Actions workflow runs the root gate and selected project tests on pushes.
+Адрес интерфейса — `http://127.0.0.1:8801`. Для Windows есть `Start-Portfolio-Workbench.ps1`.
 
-## Project groups
+## Проверка
 
-1. **Train and adapt:** PyTorch, LoRA fine-tuning, and synthetic data.
-2. **Retrieve and process:** RAG, agents, local memory, and document parsing.
-3. **Run models:** Ollama, GGUF, vLLM, model routing, and edge inference.
-4. **Evaluate and protect:** observability, code review, and red-team testing.
-5. **Reuse tools:** provider-neutral skills with executable contracts.
+В активированном окружении:
 
-See [PROJECT_SCORECARD.md](./PROJECT_SCORECARD.md) for current limitations and next steps, and [ARCHITECTURE.md](./ARCHITECTURE.md) for the project map.
+```bash
+python -m pip install jsonschema pytest httpx httpx2
+python quality_gate.py
+```
 
-## Complete catalog
+Проверка включает наличие файлов в 21 проекте, компиляцию Python и локальные тесты. Она не подтверждает все вызовы моделей, работу на GPU или качество ответов.
+
+[Архитектура](ARCHITECTURE.md) описывает группы проектов, [состояние](PROJECT_SCORECARD.md) — незавершённые части и дальнейшую работу, [PRODUCT_UPGRADES.md](PRODUCT_UPGRADES.md) — проверяемые функции.
+
+## Проекты
 
 | # | Project | Core experiment |
 |---:|---|---|
@@ -66,7 +60,6 @@ See [PROJECT_SCORECARD.md](./PROJECT_SCORECARD.md) for current limitations and n
 | 20 | [Red-Team Arena](./20_local_redteam_arena) | adversarial evaluation |
 | 21 | [Skill Forge](./21_universal_skill_forge) | portable tools with executable contracts |
 
-## License
+## Лицензия
 
-Portfolio code is released under the MIT License. Third-party models, datasets, and frameworks retain their own licenses.
-
+Код опубликован под MIT. Модели, датасеты и сторонние библиотеки распространяются по собственным лицензиям.

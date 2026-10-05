@@ -1,41 +1,23 @@
-# 08 — Dify Workflow-as-Code
+# Вызов Dify из Python
 
-The CLI calls the Dify Chatbot and Workflow APIs; workflow JSON can be versioned and reviewed in Git.
-
-## Возможности
-
-- Чат с Dify Chatbot API.
-- Запуск Workflow app с параметрами.
-- Экспорт/импорт workflow DSL для версионирования.
+CLI обращается к Chatbot и Workflow API Dify. Скрипт export_workflow.py содержит команды экспорта и импорта; workflow_contract.py сравнивает входные поля и формирует отпечаток конфигурации с маскированием выбранных данных.
 
 ## Запуск
 
+Команды выполняются из этой папки.
+
 ```bash
 pip install -r requirements.txt
-
-# Chat
 python chat.py --base-url http://localhost/v1 --api-key $DIFY_API_KEY \
   --query "Summarize the report."
-
-# Workflow run
 python workflow.py --base-url http://localhost/v1 --api-key $DIFY_API_KEY \
   --input topic=AI --input tone=professional
-
-# Export workflow для Git
 python export_workflow.py --base-url http://localhost/v1 --api-key $DIFY_API_KEY \
   --output workflow_api.json
-
-# Import workflow
 python export_workflow.py --base-url http://localhost/v1 --api-key $DIFY_API_KEY \
   --import-file workflow_api.json
 ```
 
-## Ожидаемый результат
+## Ограничения
 
-```
-{
-  "answer": "...",
-  "workflow_run_id": "..."
-}
-```
-
+Нужны запущенный Dify и ключ приложения. Доступность маршрутов экспорта и импорта зависит от версии сервера. Локальная проверка контракта не проверяет выполнение workflow на сервере.
