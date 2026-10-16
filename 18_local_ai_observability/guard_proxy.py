@@ -2,6 +2,7 @@
 """Local guard proxy that intercepts LLM calls, logs and enforces policies."""
 import argparse, json, os, time
 from pathlib import Path
+from urllib.parse import urlparse
 from flask import Flask, request, Response
 import requests
 from policies import redact, trace_summary
@@ -48,9 +49,18 @@ def log_call(req_body: dict, resp_body: dict, checks: dict, latency: float):
 @app.route("/<path:path>", methods=["POST", "GET"])
 def proxy(path):
     target = app.config["TARGET_URL"].rstrip("/")
+    if urlparse(target).path.rstrip("/").endswith("/v1") and path.startswith("v1/"):
+        path = path[3:]
     url = f"{target}/{path}"
     req_body = request.get_json(silent=True) or {}
-    prompt = " ".join(m.get("content", "") for m in req_body.get("messages", []))
+    if not isinstance(req_body, dict) or not isinstance(req_body.get("messages", []), list):
+        return {"error": "request must be an object with a messages list"}, 400
+    if req_body.get("stream"):
+        return {"error": "streaming is not supported by this proxy"}, 501
+    messages = req_body.get("messages", [])
+    if any(not isinstance(m, dict) or not isinstance(m.get("content", ""), str) for m in messages):
+        return {"error": "only text messages are supported"}, 400
+    prompt = " ".join(m.get("content", "") for m in messages)
 
     checks = {
         "pii": detect_pii(prompt),
@@ -66,13 +76,13 @@ def proxy(path):
         resp = requests.request(
             method=request.method,
             url=url,
-            headers={k: v for k, v in request.headers if k.lower() != "host"},
-            json=req_body,
+            headers={k: v for k, v in request.headers if k.lower() not in {"host", "content-length", "transfer-encoding"}},
+            params=request.args,
+            json=req_body if request.method != "GET" else None,
             timeout=120,
         )
         latency = time.time() - start
-        resp_body = resp.json() if resp.text else {}
-        log_call(req_body, resp_body, checks, latency)
+        log_call(req_body, {}, checks, latency)
         return Response(resp.content, status=resp.status_code, content_type=resp.headers.get("Content-Type"))
     except Exception as exc:
         return {"error": str(exc)}, 502

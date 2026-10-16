@@ -5,7 +5,7 @@
 {
   "ok": true,
   "python": "3.12.6",
-  "skills_dir": "D:\\codex tasks\\rezume_git\\21_universal_skill_forge\\skills",
+  "skills_dir": "21_universal_skill_forge\\skills",
   "skills": 2,
   "errors": []
 }
@@ -16,13 +16,13 @@
     "name": "calculator",
     "version": "0.1.0",
     "description": "Evaluate a safe arithmetic expression.",
-    "path": "D:\\codex tasks\\rezume_git\\21_universal_skill_forge\\skills\\calculator"
+    "path": "21_universal_skill_forge\\skills\\calculator"
   },
   {
     "name": "weather",
     "version": "1.0.0",
     "description": "Return live keyless Open-Meteo weather for a geocoded city with provenance.",
-    "path": "D:\\codex tasks\\rezume_git\\21_universal_skill_forge\\skills\\weather"
+    "path": "21_universal_skill_forge\\skills\\weather"
   }
 ]
 

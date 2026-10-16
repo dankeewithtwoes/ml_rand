@@ -7,7 +7,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
     steps:
       - uses: actions/checkout@v4
 
@@ -18,21 +25,20 @@ jobs:
       - name: Install light test dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest
+          pip install -r requirements-dev.txt
 
       - name: Root quality gate (21 projects)
-        run: python quality_gate.py
+        shell: bash
+        run: python quality_gate.py --json > quality-report.json
 
-      - name: Flagship behavioral tests
-        run: |
-          set -e
-          cd 01_pytorch_classifier_demo && python -m unittest discover -s tests -q && cd ..
-          cd 03_langchain_rag_chat && python -m unittest discover -s tests -q && cd ..
-          cd 07_vllm_serving && python -m unittest test_latency_stats -q && cd ..
-          cd 10_openhands_code_agent && python -m pytest test_repair_policy.py -q && cd ..
-          cd 11_local_knowledge_os && python -m unittest test_knowledge_store -q && cd ..
-          cd 14_local_model_router && python -m unittest test_decision -q && cd ..
-          cd 17_local_document_parser && python -m unittest test_evidence -q && cd ..
-          cd 18_local_ai_observability && python -m unittest test_policies -q && cd ..
-          cd 20_local_redteam_arena && python -m unittest discover -s tests -q && cd ..
-          cd 21_universal_skill_forge && python -m unittest discover -s tests -q && cd ..
+      - name: Check undefined names
+        run: python -m ruff check --select F821,F822,F823 .
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-report-${{ matrix.os }}
+          path: quality-report.json
+
+      - name: Check dependency consistency
+        run: python -m pip check

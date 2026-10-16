@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Compare local LLM reviewer against semgrep/bandit on synthetic code."""
-import json, subprocess, sys
+import argparse, json
 from pathlib import Path
 from review import review_text
 

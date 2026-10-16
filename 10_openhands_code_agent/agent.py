@@ -10,6 +10,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from repair_policy import validate_candidate
 
 
 load_dotenv()
@@ -29,7 +30,7 @@ def get_llm_client():
     if api_key:
         return OpenAI(api_key=api_key, base_url=base_url)
     print("OPENAI_API_KEY not set; falling back to local Ollama (llama3.1)")
-    return OpenAI(api_key="ollama", base_url="http://localhost:11434/v1")
+    return OpenAI(api_key="ollama", base_url=os.getenv("OPENAI_BASE_URL", "http://localhost:11434/v1"))
 
 
 def run_tests(test_path: Path) -> tuple[bool, str]:
@@ -77,6 +78,11 @@ def main(source_file: Path, test_file: Path, output_file: Path, model: str):
     )
 
     fixed_code = extract_code(response.choices[0].message.content)
+    policy = validate_candidate(source_code, fixed_code)
+    if not policy["valid"]:
+        raise ValueError("Patch rejected: " + "; ".join(policy["errors"]))
+    if source_file.resolve() == output_file.resolve():
+        raise ValueError("The output file must differ from the original")
     output_file.write_text(fixed_code, encoding="utf-8")
     print(f"Fixed code written to {output_file}")
 

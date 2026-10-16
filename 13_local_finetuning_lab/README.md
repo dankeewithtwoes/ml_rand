@@ -1,17 +1,23 @@
-# Подготовка данных и эксперименты с LoRA
+# Обучение LoRA-адаптера
 
-prepare_data.py готовит JSONL, data_quality.py проверяет разбиение и дубликаты, lab.py содержит обучение и перебор LoRA rank/learning rate. merge_and_quant.py объединяет адаптер с базовой моделью.
+Подготовка JSONL, разбиение данных, обучение адаптера и оценка на отложенной выборке. Дубликаты проверяются по содержимому, без служебных полей вроде ID. Обучение и оценка используют одинаковый формат instruction/input/output.
 
 ## Запуск
 
-Команды выполняются из этой папки.
+Из этой папки:
 
 ```bash
 pip install -r requirements.txt
 python prepare_data.py --input data/my_prompts.jsonl --output data/train.jsonl
-python lab.py --data data/train.jsonl --base-model Qwen/Qwen2.5-1.5B-Instruct --auto-tune
+python lab.py --data data/train.jsonl --base-model Qwen/Qwen2.5-1.5B-Instruct --output-dir outputs/lora
+python eval.py --adapter outputs/lora --val-data data/train_val.jsonl
+python merge_and_quant.py --adapter outputs/lora
 ```
 
-## Ограничения
+Для перебора rank/learning rate добавьте `--auto-tune` к `lab.py`. Веса каждого кандидата сохраняются отдельно, лучший адаптер копируется в `--output-dir`. Данные должны содержать непустые строки `instruction` и `output`; `input` необязателен. Нужны отдельные train и validation без пересечения.
 
-Это незавершённый прототип. В опубликованном eval.py perplexity пока остаётся null: скрипт не рассчитывает качество адаптера. merge_and_quant.py сохраняет объединённую модель и печатает инструкции для llama.cpp; GGUF автоматически не создаётся. Команды ниже описывают интерфейс скриптов, а не подтверждённый сквозной запуск.
+## Проверка и ограничения
+
+Проверены обучение на CPU, сохранение и повторная загрузка небольшого локального Qwen2-адаптера, loss и perplexity на отложенных примерах. Использовалась случайно инициализированная модель для проверки кода, поэтому эти числа не оценивают качество предобученного Qwen.
+
+`eval.py` считает средний loss с весом по числу токенов и perplexity; это не оценка полезности ответа человеком. При отсутствии зависимостей, данных или весов скрипты завершаются с ошибкой. `merge_and_quant.py` сохраняет объединённые веса Hugging Face; перевод в GGUF и квантование выполняются отдельно инструментами llama.cpp.

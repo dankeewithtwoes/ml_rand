@@ -15,7 +15,12 @@ PROMPT_VARIATIONS = [
 
 
 def create_grid(image_paths, output: Path, cols: int = 2):
-    imgs = [Image.open(p) for p in image_paths]
+    if not image_paths or cols <= 0:
+        raise ValueError("a grid needs images and a positive column count")
+    imgs = []
+    for path in image_paths:
+        with Image.open(path) as source:
+            imgs.append(source.convert("RGB"))
     w = max(im.width for im in imgs)
     h = max(im.height for im in imgs)
     rows = (len(imgs) + cols - 1) // cols
@@ -24,7 +29,10 @@ def create_grid(image_paths, output: Path, cols: int = 2):
         x = (i % cols) * w
         y = (i // cols) * h
         grid.paste(im, (x, y))
+    output.parent.mkdir(parents=True, exist_ok=True)
     grid.save(output)
+    for image in imgs:
+        image.close()
     return output
 
 
@@ -35,6 +43,7 @@ def main():
     parser.add_argument("--output-dir", default="outputs")
     parser.add_argument("--grid", default="outputs/grid.jpg")
     parser.add_argument("--cols", type=int, default=2)
+    parser.add_argument("--checkpoint")
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
@@ -42,9 +51,10 @@ def main():
 
     prompts = [p.strip() for p in args.prompts.split(",")]
     image_paths = []
+    failures = []
     for idx, prompt in enumerate(prompts):
         try:
-            p = generate.build_prompt(prompt, "blurry", seed=42 + idx, width=512, height=512, steps=20, cfg=8.0)
+            p = generate.build_prompt(prompt, "blurry", seed=42 + idx, width=512, height=512, steps=20, cfg=8.0, checkpoint=args.checkpoint)
             res = generate.queue_prompt(args.server, p)
             history = generate.get_history(args.server, res["prompt_id"])
             if not history:
@@ -55,15 +65,16 @@ def main():
                     image_paths.append(path)
                     print(f"Saved {path}")
         except Exception as exc:
-            print(f"[skip] prompt {idx}: {exc}")
-            time.sleep(0.5)
+            failures.append({"prompt": idx, "error": str(exc)})
 
     if image_paths:
         grid_path = create_grid(image_paths, Path(args.grid), args.cols)
         print(f"Grid saved {grid_path}")
         # Save metadata
         meta = {"prompts": prompts, "images": [str(p) for p in image_paths], "grid": str(grid_path)}
-        Path(args.grid).with_suffix(".json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+        Path(args.grid).with_suffix(".json").write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+    if failures or not image_paths:
+        parser.exit(2, f"Batch generation incomplete: {failures or 'no images'}\n")
 
 
 if __name__ == "__main__":

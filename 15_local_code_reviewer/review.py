@@ -37,6 +37,8 @@ def get_diff(ref: str) -> str:
         ["git", "diff", ref],
         capture_output=True, text=True,
     )
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or "git diff failed")
     return result.stdout
 
 
@@ -52,7 +54,7 @@ def call_llm_for_review(code: str) -> str:
         resp = client.chat.completions.create(model=model, messages=[{"role": "user", "content": prompt}], temperature=0.2)
         return resp.choices[0].message.content
     except Exception as exc:
-        return f"[skip] LLM unavailable: {exc}"
+        raise RuntimeError(f"LLM review failed: {exc}") from exc
 
 
 def main():

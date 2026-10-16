@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 
 import numpy as np
-from peft import PeftModel
+import torch
+from peft import PeftModel, PeftConfig
 from sklearn.metrics import accuracy_score, classification_report, f1_score
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
@@ -25,7 +26,7 @@ def load_jsonl(path: Path):
 def main(model_dir: Path, data_path: Path):
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     base_model = AutoModelForSequenceClassification.from_pretrained(
-        "distilbert-base-uncased", num_labels=2
+        PeftConfig.from_pretrained(model_dir).base_model_name_or_path, num_labels=2
     )
     model = PeftModel.from_pretrained(base_model, model_dir)
     model.eval()
@@ -33,9 +34,9 @@ def main(model_dir: Path, data_path: Path):
     texts, labels = load_jsonl(data_path)
     inputs = tokenizer(texts, return_tensors="pt", truncation=True, padding=True, max_length=128)
 
-    with np.errstate(all="ignore"):
+    with torch.no_grad():
         logits = model(**inputs).logits
-        preds = logits.argmax(dim=1).numpy()
+        preds = logits.argmax(dim=1).cpu().numpy()
 
     print(f"Accuracy: {accuracy_score(labels, preds):.4f}")
     print(f"F1: {f1_score(labels, preds):.4f}\n")

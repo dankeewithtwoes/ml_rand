@@ -19,9 +19,7 @@ def main():
     try:
         from llama_cpp import Llama
     except Exception as exc:  # pragma: no cover - optional heavy dep
-        print(f"[skip] llama-cpp-python unavailable: {exc}")
-        print(f"Would generate answer for: {args.prompt}")
-        return
+        raise RuntimeError(f"llama-cpp-python unavailable: {exc}") from exc
 
     llm = Llama(str(model_path), n_ctx=2048, verbose=False)
     out = llm(args.prompt, max_tokens=args.max_tokens, stop=["User:", "\n\n"])

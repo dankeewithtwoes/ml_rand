@@ -7,13 +7,12 @@ from knowledge_store import KnowledgeStore
 
 def call_local_llm(prompt: str) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
-    base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1" if api_key else "http://localhost:11434/v1")
     model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
     try:
         from openai import OpenAI
         client = OpenAI(api_key=api_key or "ollama", base_url=base_url)
         if not api_key:
-            client = OpenAI(api_key="ollama", base_url="http://localhost:11434/v1")
             model = os.getenv("OLLAMA_MODEL", "llama3.1")
         resp = client.chat.completions.create(
             model=model,
@@ -22,8 +21,7 @@ def call_local_llm(prompt: str) -> str:
         )
         return resp.choices[0].message.content
     except Exception as exc:
-        print(f"[skip] LLM call failed: {exc}")
-        return "[LLM unavailable]"
+        raise RuntimeError(f"LLM call failed: {exc}") from exc
 
 
 def main():

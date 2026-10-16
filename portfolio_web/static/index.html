@@ -1,34 +1,44 @@
 <!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portfolio Workbench · 21 local AI tools</title>
-  <link rel="stylesheet" href="/static/styles.css">
-</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101319"><title>ML Workbench · Данила Кизима</title><link rel="stylesheet" href="/static/styles.css"></head>
 <body>
-  <header class="hero">
-    <nav><a class="brand" href="/">PW<span>21</span></a><input id="search" type="search" placeholder="Найти инструмент или задачу…"><button id="historyButton" class="ghost">История</button></nav>
-    <div class="hero-copy"><p class="eyebrow">ML-ПРОЕКТЫ</p><h1>21 проект.<br><em>Примеры и результаты.</em></h1><p>Каждая карточка запускает исходную функцию своего проекта. Результаты сохраняются локально и доступны для ручной проверки.</p></div>
-    <div class="stats"><span><b id="projectCount">21</b> проектов</span><span><b>0</b> внешних ключей для примеров</span><span><b>SQLite</b> история</span></div>
-  </header>
+<aside class="sidebar" aria-label="Навигация по портфолио">
+  <a class="brand" href="/"><span class="brand-mark">M</span> ML Workbench</a>
+  <p class="sidebar-label">РАБОЧЕЕ ПРОСТРАНСТВО</p>
+  <nav class="categories" aria-label="Направления">
+    <button class="category active" data-category="all" aria-pressed="true"><span>Все проекты</span><small>21</small></button>
+    <button class="category" data-category="training" aria-pressed="false">Обучение и данные</button>
+    <button class="category" data-category="retrieval" aria-pressed="false">Поиск и документы</button>
+    <button class="category" data-category="inference" aria-pressed="false">Локальные модели</button>
+    <button class="category" data-category="applications" aria-pressed="false">Приложения и агенты</button>
+    <button class="category" data-category="quality" aria-pressed="false">Качество и безопасность</button>
+  </nav>
+  <button id="historyButton" class="sidebar-history">История запусков <span>↗</span></button>
+  <div class="sidebar-links"><p class="sidebar-label">ПРОЕКТЫ АВТОРА</p>
+    <a href="https://socialnest.duckdns.org/" target="_blank" rel="noopener noreferrer">Social Nest <span>↗</span></a>
+    <a href="https://socialnest.duckdns.org/avata" target="_blank" rel="noopener noreferrer">Avata <span>↗</span></a>
+    <a href="http://127.0.0.1:8092/" target="_blank" rel="noopener noreferrer">AI Radio <small>локально ↗</small></a>
+    <a href="https://github.com/dankeewithtwoes/ml_rand" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a>
+  </div>
+  <div class="author"><span class="avatar">ДК</span><div><b>Данила Кизима</b><small>ML / AI-разработка</small></div></div>
+</aside>
+<div class="workspace">
+  <header class="topbar"><span>Портфолио <span class="separator">/</span> <b>Инструменты</b></span><span id="connectionStatus" class="connection">Подключение…</span></header>
   <main>
-    <div class="section-head"><div><p class="eyebrow">WORKBENCH</p><h2>Каталог модулей</h2></div><span id="matchCount">Загрузка…</span></div>
-    <section id="catalog" class="catalog" aria-live="polite"></section>
+    <div class="intro"><p class="eyebrow">МАШИННОЕ ОБУЧЕНИЕ И ЛОКАЛЬНЫЙ ИИ</p><h1>От данных к работающему инструменту.</h1><p>Выберите проект, измените входные данные и изучите результат. Всё в одном рабочем пространстве.</p></div>
+    <div class="stats"><span><b id="projectCount">21</b> проект</span><span>Локальное выполнение примеров</span><span>История запусков</span></div>
+    <div class="section-head"><h2 id="catalogTitle">Все проекты</h2><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" aria-label="Поиск проектов" placeholder="Найти проект…"></label><span id="matchCount">Загрузка…</span></div>
+    <p class="scope-note">Здесь запускаются отдельные функции проектов. Обучение моделей, генерация медиа и обращения к LLM требуют запуска соответствующего проекта и его зависимостей.</p>
+    <p id="catalogError" class="error" role="alert" hidden></p><section id="catalog" class="catalog" aria-live="polite" aria-label="Каталог проектов"></section><p id="emptyState" class="empty-state" hidden>Проектов не найдено. Попробуйте другое название или направление.</p>
   </main>
-
-  <dialog id="runner">
-    <form method="dialog" class="dialog-head"><div><p id="runnerIndex" class="eyebrow"></p><h2 id="runnerTitle"></h2><p id="runnerProblem"></p></div><button class="close" value="close" aria-label="Закрыть">×</button></form>
-    <div class="runner-grid">
-      <section><div class="pane-head"><b>Входные данные</b><button id="sampleButton" class="text-button">Вернуть пример</button></div><textarea id="payload" spellcheck="false"></textarea><button id="runButton" class="primary">Запустить функцию</button><p id="runError" class="error" role="alert"></p></section>
-      <section><div class="pane-head"><b>Фактический результат</b><span id="runStatus" class="badge">не запускалось</span></div><pre id="result">Выберите данные и нажмите «Запустить функцию».</pre><div id="reviewActions" class="reviews" hidden><button data-review="approved">Принять</button><button data-review="needs_changes">На доработку</button><button data-review="rejected">Отклонить</button><button id="downloadButton">Скачать JSON</button></div></section>
-    </div>
-  </dialog>
-
-  <dialog id="historyDialog" class="history-dialog">
-    <form method="dialog" class="dialog-head"><div><p class="eyebrow">ИСТОРИЯ</p><h2>История запусков</h2></div><button class="close" value="close" aria-label="Закрыть">×</button></form>
-    <div id="history" class="history"></div>
-  </dialog>
-  <script src="/static/app.js" defer></script>
-</body>
-</html>
+</div>
+<dialog id="runner" aria-labelledby="runnerTitle">
+  <form method="dialog" class="dialog-head"><div><p id="runnerIndex" class="eyebrow"></p><h2 id="runnerTitle"></h2><p id="runnerProblem"></p></div><button class="close" value="close" aria-label="Закрыть">×</button></form>
+  <div class="runner-grid">
+    <section><div class="pane-head"><b>Входные данные</b><button id="sampleButton" class="text-button">Вернуть пример</button></div><label for="payload" class="sr-only">Входные данные JSON</label><textarea id="payload" spellcheck="false"></textarea><button id="runButton" class="primary">Запустить функцию <span aria-hidden="true">↗</span></button><p id="runError" class="error" role="alert"></p></section>
+    <section><div class="pane-head"><b>Результат</b><span id="runStatus" class="badge" role="status">Не запускалось</span></div><pre id="result">Выберите данные и нажмите «Запустить функцию».</pre><div id="reviewActions" class="reviews" hidden><button data-review="approved">Принять</button><button data-review="needs_changes">На доработку</button><button data-review="rejected">Отклонить</button><button id="downloadButton">Скачать JSON</button></div></section>
+  </div>
+</dialog>
+<dialog id="historyDialog" class="history-dialog" aria-labelledby="historyTitle"><form method="dialog" class="dialog-head"><div><p class="eyebrow">РАБОЧЕЕ ПРОСТРАНСТВО</p><h2 id="historyTitle">История запусков</h2></div><button class="close" value="close" aria-label="Закрыть историю">×</button></form><div id="history" class="history"></div></dialog>
+<script src="/static/app.js" defer></script>
+</body></html>

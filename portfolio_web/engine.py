@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -10,7 +11,7 @@ from types import SimpleNamespace
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / ".app-data"
+DATA_DIR = Path(os.getenv("PORTFOLIO_WORKBENCH_DATA", str(ROOT / ".app-data")))
 
 
 def _load(relative: str):

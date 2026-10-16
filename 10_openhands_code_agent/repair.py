@@ -25,7 +25,9 @@ def call_llm(prompt: str, model: str = "gpt-4o-mini") -> str:
     except Exception as exc:
         raise RuntimeError(f"openai SDK unavailable: {exc}")
 
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    key = os.getenv("OPENAI_API_KEY")
+    client = OpenAI(api_key=key or "ollama", base_url=os.getenv("OPENAI_BASE_URL",
+        "https://api.openai.com/v1" if key else "http://localhost:11434/v1"))
     resp = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
@@ -94,6 +96,7 @@ def main():
         print("\n[fail] repair did not converge")
         # restore original
         source_path.write_text(original, encoding="utf-8")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

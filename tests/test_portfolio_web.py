@@ -12,6 +12,7 @@ class PortfolioWebTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         os.environ["PORTFOLIO_WORKBENCH_DB"] = str(Path(cls.temp.name) / "runs.sqlite3")
+        os.environ["PORTFOLIO_WORKBENCH_DATA"] = str(Path(cls.temp.name) / "module-data")
         api = importlib.import_module("portfolio_web.api")
         cls.client = TestClient(api.app)
 
@@ -45,7 +46,7 @@ class PortfolioWebTests(unittest.TestCase):
     def test_static_ui_is_served(self):
         page = self.client.get("/")
         self.assertEqual(200, page.status_code)
-        self.assertIn("21 проект", page.text)
+        self.assertIn("ML Workbench", page.text)
 
 
 if __name__ == "__main__":

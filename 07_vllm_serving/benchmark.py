@@ -34,6 +34,8 @@ def _call(base_url: str, api_key: str, model: str, prompt: str, max_tokens: int)
 
 
 def run_benchmark(base_url: str, api_key: str, model: str, concurrency: int, rounds: int, max_tokens: int):
+    if concurrency <= 0 or rounds <= 0 or max_tokens <= 0:
+        raise ValueError("concurrency, rounds and max_tokens must be positive")
     tasks = [(base_url, api_key, model, PROMPTS[i % len(PROMPTS)], max_tokens) for i in range(concurrency * rounds)]
     start = time.time()
     with ThreadPoolExecutor(max_workers=concurrency) as pool:
@@ -74,8 +76,7 @@ def main():
     try:
         import openai
     except Exception as exc:  # pragma: no cover - optional dep
-        print(f"[skip] openai SDK unavailable: {exc}")
-        return
+        raise RuntimeError(f"openai SDK unavailable: {exc}") from exc
 
     result = run_benchmark(args.base_url, args.api_key, args.model, args.concurrency, args.rounds, args.max_tokens)
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)

@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 
 import torch
-from peft import PeftModel
+from peft import PeftModel, PeftConfig
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 LABEL_NAMES = ["negative", "positive"]
@@ -14,7 +14,7 @@ LABEL_NAMES = ["negative", "positive"]
 def main(model_dir: Path, text: str):
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
     base_model = AutoModelForSequenceClassification.from_pretrained(
-        "distilbert-base-uncased", num_labels=2
+        PeftConfig.from_pretrained(model_dir).base_model_name_or_path, num_labels=2
     )
     model = PeftModel.from_pretrained(base_model, model_dir)
     model.eval()

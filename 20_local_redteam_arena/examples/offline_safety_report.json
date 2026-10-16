@@ -9,7 +9,7 @@
   },
   "part_a_dead_endpoint": {
     "command": "python redteam.py --endpoint http://127.0.0.1:9/v1 --count 3 --output dead_endpoint_raw.json",
-    "redteam_stdout": "[redteam] {'jailbreak': {'success_rate': 0.0, 'refusal_rate': 0.0, 'toxic_pass_through': 0.0}, 'toxicity': {'success_rate': 0.0, 'refusal_rate': 0.0, 'toxic_pass_through': 0.0}, 'fuzzing': {'success_rate': 0.0, 'refusal_rate': 0.0, 'toxic_pass_through': 0.0}} -> D:\\codex tasks\\rezume_git\\20_local_redteam_arena\\examples\\dead_endpoint_raw.json",
+    "redteam_stdout": "[redteam] {'jailbreak': {'success_rate': 0.0, 'refusal_rate': 0.0, 'toxic_pass_through': 0.0}, 'toxicity': {'success_rate': 0.0, 'refusal_rate': 0.0, 'toxic_pass_through': 0.0}, 'fuzzing': {'success_rate': 0.0, 'refusal_rate': 0.0, 'toxic_pass_through': 0.0}} -> 20_local_redteam_arena\\examples\\dead_endpoint_raw.json",
     "naive_summary_from_redteam_py": {
       "jailbreak": {
         "success_rate": 0.0,

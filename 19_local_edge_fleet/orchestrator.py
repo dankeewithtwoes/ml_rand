@@ -18,17 +18,29 @@ def load_nodes(path: Path) -> list:
     return data.get("nodes", [])
 
 
-def health_check(node: dict) -> bool:
+def health_check(node: dict) -> dict | None:
     try:
         resp = requests.get(f"{node['url']}/health", timeout=2)
-        return resp.status_code == 200
+        if resp.status_code != 200:
+            return None
+        data = resp.json()
+        return data if isinstance(data, dict) else None
     except Exception:
-        return False
+        return None
 
 
 def select_node(nodes: list, policy: str, state: FleetState | None = None) -> dict:
     state = state or FleetState()
-    healthy = [n for n in nodes if state.available(n["name"]) and health_check(n)]
+    healthy = []
+    for node in nodes:
+        if not state.available(node["name"]):
+            continue
+        health = health_check(node)
+        if health is not None:
+            try:
+                healthy.append({**node, "load": float(health.get("load", node.get("load", 0)))})
+            except (TypeError, ValueError):
+                continue
     if not healthy:
         return None
     if policy == "round-robin":
@@ -41,19 +53,32 @@ def select_node(nodes: list, policy: str, state: FleetState | None = None) -> di
 @app.route("/v1/chat/completions", methods=["POST"])
 def chat():
     data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict) or not isinstance(data.get("messages"), list):
+        return jsonify({"error": "messages must be a list"}), 400
     nodes = app.config["NODES"]
     policy = app.config["POLICY"]
     state = app.config["FLEET_STATE"]
-    node = select_node(nodes, policy, state)
-    if node is None:
-        return jsonify({"error": "no healthy nodes"}), 503
-    try:
-        resp = requests.post(f"{node['url']}/v1/chat/completions", json=data, timeout=120)
-        state.record(node["name"], resp.status_code < 500)
-        return jsonify(resp.json()), resp.status_code
-    except Exception as exc:
-        state.record(node["name"], False)
-        return jsonify({"error": str(exc), "node": node["name"]}), 502
+    remaining = list(nodes)
+    failures = []
+    while remaining:
+        node = select_node(remaining, policy, state)
+        if node is None:
+            break
+        remaining = [item for item in remaining if item["name"] != node["name"]]
+        try:
+            resp = requests.post(f"{node['url'].rstrip('/')}/v1/chat/completions", json=data, timeout=120)
+            body = resp.json()
+            if resp.status_code >= 500:
+                state.record(node["name"], False)
+                failures.append(node["name"])
+                continue
+            state.record(node["name"], True)
+            return jsonify(body), resp.status_code
+        except (requests.RequestException, ValueError):
+            state.record(node["name"], False)
+            failures.append(node["name"])
+    return jsonify({"error": "all reachable nodes failed" if failures else "no healthy nodes",
+                    "failed_nodes": failures}), 502 if failures else 503
 
 
 def main():

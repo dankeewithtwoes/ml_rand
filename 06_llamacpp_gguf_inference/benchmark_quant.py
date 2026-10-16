@@ -8,8 +8,7 @@ def bench(model_path: Path, prompt: str, max_tokens: int):
     try:
         from llama_cpp import Llama
     except Exception as exc:  # pragma: no cover - optional heavy dep
-        print(f"[skip] llama-cpp-python unavailable: {exc}")
-        return None
+        raise RuntimeError(f"llama-cpp-python unavailable: {exc}") from exc
 
     start = time.time()
     llm = Llama(str(model_path), n_ctx=2048, verbose=False)
@@ -46,6 +45,8 @@ def main():
             results.append(res)
             print(f"  tokens/sec={res['tokens_per_sec']} load={res['load_time_s']}s gen={res['generation_time_s']}s")
 
+    if not results:
+        raise ValueError(f"No GGUF models found in {args.models_dir}")
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(json.dumps(results, indent=2, ensure_ascii=False))
     print(f"Saved {args.output}")

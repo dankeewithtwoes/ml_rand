@@ -4,11 +4,26 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+PROJECT_SUITES = {
+    "01_pytorch_classifier_demo": ["unittest", "discover", "-s", "tests", "-v"],
+    "03_langchain_rag_chat": ["unittest", "discover", "-s", "tests", "-v"],
+    "04_llamaindex_agent": ["unittest", "test_web_search", "-v"],
+    "07_vllm_serving": ["unittest", "test_latency_stats", "-v"],
+    "10_openhands_code_agent": ["pytest", "test_repair_policy.py", "-q"],
+    "11_local_knowledge_os": ["unittest", "test_knowledge_store", "-v"],
+    "12_local_voice_companion": ["unittest", "test_audio_io", "-v"],
+    "14_local_model_router": ["unittest", "test_decision", "-v"],
+    "16_local_synthetic_data_factory": ["unittest", "test_generate_qa", "-v"],
+    "17_local_document_parser": ["unittest", "discover", "-p", "test*.py", "-v"],
+    "18_local_ai_observability": ["unittest", "test_policies", "-v"],
+    "20_local_redteam_arena": ["unittest", "discover", "-s", "tests", "-v"],
+}
 
 
 def validate_contract() -> dict:
@@ -30,7 +45,12 @@ def validate_contract() -> dict:
 
 
 def run(command: list[str], cwd: Path = ROOT) -> dict:
-    process = subprocess.run(command, cwd=cwd, text=True, capture_output=True)
+    environment = dict(os.environ, PYTHONIOENCODING="utf-8")
+    try:
+        process = subprocess.run(command, cwd=cwd, text=True, encoding="utf-8", errors="replace",
+                                 capture_output=True, env=environment, timeout=180)
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "command": command, "output": "Test process exceeded 180 seconds"}
     return {"ok": process.returncode == 0, "command": command, "output": process.stdout + process.stderr}
 
 
@@ -40,7 +60,10 @@ def main() -> int:
     report["behavior"] = run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"])
     report["skillforge"] = run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"], ROOT / "21_universal_skill_forge")
     report["compilation"] = run([sys.executable, "run_all_smoke_tests.py"])
-    report["ok"] = all(section["ok"] for section in (report["contract"], report["behavior"], report["skillforge"], report["compilation"]))
+    suites = {folder: run([sys.executable, "-m", *command], ROOT / folder)
+              for folder, command in PROJECT_SUITES.items()}
+    report["project_tests"] = {"ok": all(suite["ok"] for suite in suites.values()), "suites": suites}
+    report["ok"] = all(section["ok"] for section in (report["contract"], report["behavior"], report["skillforge"], report["compilation"], report["project_tests"]))
     if args.json: print(json.dumps(report, indent=2, ensure_ascii=False))
     else:
         print(f"Quality gate: {'PASS' if report['ok'] else 'FAIL'}")
@@ -48,6 +71,9 @@ def main() -> int:
         print(report["behavior"]["output"].strip())
         print(report["skillforge"]["output"].strip())
         print(report["compilation"]["output"].strip())
+        for folder, suite in suites.items():
+            print(f"{folder}: {'PASS' if suite['ok'] else 'FAIL'}")
+            if not suite["ok"]: print(suite["output"].strip())
         for error in report["contract"]["errors"]: print(f"[contract] {error}")
     return 0 if report["ok"] else 1
 

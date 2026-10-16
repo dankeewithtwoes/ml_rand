@@ -1,0 +1,11 @@
+-r requirements-web.txt
+httpx>=0.28,<0.29
+httpx2>=2,<3
+pytest>=8.3,<10
+requests>=2.32,<3
+Flask>=3,<4
+PyYAML>=6,<7
+openai>=2,<3
+Pillow>=10,<13
+python-dotenv>=1,<2
+ruff>=0.14,<1

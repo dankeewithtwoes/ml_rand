@@ -9,13 +9,14 @@ def main():
     parser.add_argument("--base-model", default="Qwen/Qwen2.5-1.5B-Instruct")
     parser.add_argument("--steps", type=int, default=10)
     args = parser.parse_args()
+    if args.steps <= 0:
+        parser.error("--steps must be positive")
 
     try:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except Exception as exc:
-        print(f"[skip] heavy deps unavailable: {exc}")
-        return
+        raise RuntimeError(f"Benchmark dependencies unavailable: {exc}") from exc
 
     start = time.time()
     model = AutoModelForCausalLM.from_pretrained(args.base_model)
@@ -26,12 +27,19 @@ def main():
     model = model.to(device)
     sample = "This is a benchmark sentence for training throughput."
     inputs = tokenizer(sample, return_tensors="pt").to(device)
+    model.train()
+    if device == "cuda":
+        torch.cuda.reset_peak_memory_stats()
+        torch.cuda.synchronize()
 
     start = time.time()
     for _ in range(args.steps):
+        model.zero_grad(set_to_none=True)
         outputs = model(**inputs, labels=inputs["input_ids"])
         loss = outputs.loss
         loss.backward()
+    if device == "cuda":
+        torch.cuda.synchronize()
     elapsed = time.time() - start
     tokens = inputs["input_ids"].shape[1] * args.steps
     peak_vram = torch.cuda.max_memory_allocated() / 1e9 if torch.cuda.is_available() else 0.0

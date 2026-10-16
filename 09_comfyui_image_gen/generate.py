@@ -2,6 +2,7 @@
 """Generate one image via ComfyUI API."""
 import argparse, json, os, time, urllib.request
 from pathlib import Path
+from urllib.parse import urlencode
 
 
 PROMPT_TEMPLATE = {
@@ -31,29 +32,34 @@ def queue_prompt(server: str, prompt: dict):
 
 
 def get_history(server: str, prompt_id: str, timeout: int = 300):
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        try:
-            with urllib.request.urlopen(f"{server}/history/{prompt_id}", timeout=10) as resp:
-                data = json.loads(resp.read())
-            if prompt_id in data and data[prompt_id].get("outputs"):
-                return data[prompt_id]
-        except Exception:
-            pass
+    if timeout <= 0:
+        raise ValueError("timeout must be positive")
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        with urllib.request.urlopen(f"{server.rstrip('/')}/history/{prompt_id}", timeout=min(10, timeout)) as resp:
+            data = json.loads(resp.read())
+        history = data.get(prompt_id, {})
+        if history.get("status", {}).get("status_str") == "error":
+            raise RuntimeError(f"ComfyUI execution failed: {history['status'].get('messages', [])}")
+        if history.get("outputs"):
+            return history
         time.sleep(0.5)
-    return None
+    raise TimeoutError("Timed out waiting for ComfyUI")
 
 
 def fetch_image(server: str, filename: str, subfolder: str, folder_type: str, output_dir: Path):
-    params = f"filename={filename}&subfolder={subfolder}&type={folder_type}"
+    if not filename or "/" in filename or "\\" in filename or filename in {".", ".."}:
+        raise ValueError("ComfyUI image filename must not contain a path")
+    params = urlencode({"filename": filename, "subfolder": subfolder, "type": folder_type})
     url = f"{server}/view?{params}"
     data = urllib.request.urlopen(url, timeout=30).read()
     out = output_dir / filename
+    output_dir.mkdir(parents=True, exist_ok=True)
     out.write_bytes(data)
     return out
 
 
-def build_prompt(positive: str, negative: str, seed: int, width: int, height: int, steps: int, cfg: float):
+def build_prompt(positive: str, negative: str, seed: int, width: int, height: int, steps: int, cfg: float, checkpoint: str | None = None):
     p = json.loads(json.dumps(PROMPT_TEMPLATE))
     p["3"]["inputs"]["seed"] = seed
     p["3"]["inputs"]["steps"] = steps
@@ -62,6 +68,8 @@ def build_prompt(positive: str, negative: str, seed: int, width: int, height: in
     p["5"]["inputs"]["height"] = height
     p["6"]["inputs"]["text"] = positive
     p["7"]["inputs"]["text"] = negative
+    if checkpoint:
+        p["4"]["inputs"]["ckpt_name"] = checkpoint
     return p
 
 
@@ -76,28 +84,30 @@ def main():
     parser.add_argument("--steps", type=int, default=20)
     parser.add_argument("--cfg", type=float, default=8.0)
     parser.add_argument("--output-dir", default="outputs")
+    parser.add_argument("--checkpoint", help="checkpoint filename installed in ComfyUI")
+    parser.add_argument("--timeout", type=float, default=300)
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    prompt = build_prompt(args.prompt, args.negative, args.seed, args.width, args.height, args.steps, args.cfg)
+    prompt = build_prompt(args.prompt, args.negative, args.seed, args.width, args.height, args.steps, args.cfg, args.checkpoint)
     try:
         res = queue_prompt(args.server, prompt)
     except Exception as exc:
-        print(f"[skip] ComfyUI not reachable: {exc}")
-        return
+        parser.exit(2, f"ComfyUI request failed: {exc}\n")
 
     prompt_id = res["prompt_id"]
-    history = get_history(args.server, prompt_id)
-    if not history:
-        print("Timeout waiting for ComfyUI")
-        return
+    history = get_history(args.server, prompt_id, args.timeout)
 
+    saved = 0
     for node_id, node_output in history["outputs"].items():
         for img in node_output.get("images", []):
             path = fetch_image(args.server, img["filename"], img.get("subfolder", ""), img["type"], output_dir)
             print(f"Saved {path}")
+            saved += 1
+    if not saved:
+        parser.exit(2, "ComfyUI returned no images\n")
 
 
 if __name__ == "__main__":

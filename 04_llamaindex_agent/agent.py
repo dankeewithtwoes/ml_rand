@@ -9,11 +9,15 @@ from typing import List
 
 from dotenv import load_dotenv
 from llama_index.core import Settings, SimpleDirectoryReader, VectorStoreIndex
-from llama_index.core.agent import ReActAgent
+try:
+    from llama_index.core.agent.legacy.react.base import ReActAgent
+except ImportError:
+    from llama_index.core.agent import ReActAgent
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.core.tools import FunctionTool, QueryEngineTool, ToolMetadata
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.openai import OpenAI
+from llama_index.llms.openai_like import OpenAILike
 from pydantic import BaseModel, Field
 from safe_math import evaluate
 from web_search import WebSearchError, search_web
@@ -59,13 +63,16 @@ def build_agent(docs_dir: Path):
     api_key = os.getenv("OPENAI_API_KEY")
     model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
     if api_key:
-        Settings.llm = OpenAI(model=model, api_key=api_key, base_url=os.getenv("OPENAI_BASE_URL"))
+        Settings.llm = OpenAI(model=model, api_key=api_key, api_base=os.getenv("OPENAI_BASE_URL"))
     else:
         print("OPENAI_API_KEY not set; using local Ollama (llama3.1)")
-        Settings.llm = OpenAI(
-            model="llama3.1",
+        Settings.llm = OpenAILike(
+            model=os.getenv("OLLAMA_MODEL", "llama3.1"),
             api_key="ollama",
-            api_base="http://localhost:11434/v1",
+            api_base=os.getenv("OPENAI_BASE_URL", "http://localhost:11434/v1"),
+            is_chat_model=True,
+            is_function_calling_model=False,
+            context_window=8192,
             temperature=0.2,
         )
 

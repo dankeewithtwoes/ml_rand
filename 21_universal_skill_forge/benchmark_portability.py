@@ -12,13 +12,23 @@ def test_skill_on_model(skill_dir: Path, model_ref: str) -> bool:
     skill = Skill(skill_dir)
     try:
         sample = load_examples(skill)[0]["input"]
-        skill.run(sample)
+        expected = skill.run(sample)
     except Exception:
         return False
 
     tools = format_tools_for_provider("openai", [skill])
-    resp = call_model(model_ref, [{"role": "user", "content": f"Call {skill.name}"}], tools)
-    return not (isinstance(resp, dict) and "error" in resp)
+    resp = call_model(model_ref, [{"role": "user", "content":
+        f"Call {skill.name} with these exact arguments: {json.dumps(sample, ensure_ascii=False)}"}], tools)
+    if isinstance(resp, dict):
+        return False
+    try:
+        calls = resp.choices[0].message.tool_calls
+        if not calls or len(calls) != 1 or calls[0].function.name != skill.name:
+            return False
+        arguments = json.loads(calls[0].function.arguments)
+        return arguments == sample and skill.run(arguments) == expected
+    except (AttributeError, IndexError, TypeError, ValueError):
+        return False
 
 
 def main():

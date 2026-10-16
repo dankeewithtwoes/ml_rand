@@ -26,11 +26,11 @@ python portfolio_app.py --open
 В активированном окружении:
 
 ```bash
-python -m pip install jsonschema pytest httpx httpx2
+python -m pip install -r requirements-dev.txt
 python quality_gate.py
 ```
 
-Проверка включает наличие файлов в 21 проекте, компиляцию Python и локальные тесты. Она не подтверждает все вызовы моделей, работу на GPU или качество ответов.
+Проверка включает наличие файлов в 21 проекте, компиляцию Python, корневые тесты, отдельные наборы тестов модулей и HTTP-связки с локальным тестовым сервером. В GitHub Actions она выполняется на Linux и Windows. Она не подтверждает все вызовы моделей, работу на GPU или качество ответов.
 
 [Архитектура](ARCHITECTURE.md) описывает группы проектов, [состояние](PROJECT_SCORECARD.md) — незавершённые части и дальнейшую работу, [PRODUCT_UPGRADES.md](PRODUCT_UPGRADES.md) — проверяемые функции.
 
@@ -59,6 +59,8 @@ python quality_gate.py
 | 19 | [Edge fleet](./19_local_edge_fleet) | distributed inference and failover |
 | 20 | [Red-Team Arena](./20_local_redteam_arena) | adversarial evaluation |
 | 21 | [Skill Forge](./21_universal_skill_forge) | portable tools with executable contracts |
+
+Подробный перечень выполненных запусков и ограничений находится в [VERIFICATION.md](VERIFICATION.md).
 
 ## Лицензия
 

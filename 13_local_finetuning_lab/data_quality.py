@@ -5,7 +5,16 @@ import random
 
 
 def fingerprint(item: dict) -> str:
-    return hashlib.sha256(json.dumps(item, sort_keys=True, ensure_ascii=False).strip().lower().encode()).hexdigest()
+    content = {key: " ".join(str(item.get(key, "")).split()).casefold()
+               for key in ("instruction", "input", "output")}
+    return hashlib.sha256(json.dumps(content, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def format_record(item: dict) -> str:
+    text = f"### Instruction:\n{item['instruction']}"
+    if item.get("input"):
+        text += f"\n\n### Input:\n{item['input']}"
+    return text + f"\n\n### Response:\n{item['output']}"
 
 
 def validate(items: list[dict]) -> dict:
@@ -13,7 +22,10 @@ def validate(items: list[dict]) -> dict:
     for index, item in enumerate(items):
         if not isinstance(item, dict): errors.append({"row": index, "error": "not an object"}); continue
         for field in ("instruction", "output"):
-            if not str(item.get(field, "")).strip(): errors.append({"row": index, "error": f"empty {field}"})
+            if not isinstance(item.get(field), str) or not item[field].strip():
+                errors.append({"row": index, "error": f"{field} must be a non-empty string"})
+        if "input" in item and not isinstance(item["input"], str):
+            errors.append({"row": index, "error": "input must be a string"})
         digest = fingerprint(item)
         if digest in seen: duplicates.append(index)
         seen.add(digest)

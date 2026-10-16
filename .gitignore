@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv*/
+.pytest_cache/
+.ruff_cache/
+.app-data/
+.env
+**/.env
+quality-report.json
+**/outputs/
+**/models/

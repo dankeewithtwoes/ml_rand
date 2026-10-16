@@ -31,7 +31,7 @@ def call_model(model: dict, prompt: str) -> str:
     try:
         from openai import OpenAI
     except Exception as exc:
-        return f"[skip] openai SDK unavailable: {exc}"
+        raise RuntimeError(f"openai SDK unavailable: {exc}") from exc
     api_key = os.getenv("OPENAI_API_KEY") if model["type"] == "cloud" else "ollama"
     base_url = model["url"]
     if model["type"] == "local" and not os.getenv("OPENAI_API_KEY"):
@@ -46,7 +46,7 @@ def call_model(model: dict, prompt: str) -> str:
         )
         return resp.choices[0].message.content
     except Exception as exc:
-        return f"[skip] model call failed: {exc}"
+        raise RuntimeError(f"Model call failed: {exc}") from exc
 
 
 def main():

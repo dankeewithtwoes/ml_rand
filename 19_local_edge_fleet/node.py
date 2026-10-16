@@ -8,12 +8,18 @@ import requests
 app = Flask(__name__)
 
 
-def call_local_llm(messages, model_url: str):
+def call_local_llm(payload: dict, model_url: str):
+    body = dict(payload)
+    body.setdefault("model", "llama3.1")
+    body.setdefault("temperature", 0.2)
+    base = model_url.rstrip("/")
+    if not base.endswith("/v1"):
+        base += "/v1"
     try:
         resp = requests.post(
-            f"{model_url}/chat/completions",
+            f"{base}/chat/completions",
             headers={"Authorization": f"Bearer {os.getenv('OPENAI_API_KEY', 'ollama')}"},
-            json={"model": "llama3.1", "messages": messages, "temperature": 0.2},
+            json=body,
             timeout=120,
         )
         return resp.json(), resp.status_code
@@ -29,8 +35,14 @@ def health():
 @app.route("/v1/chat/completions", methods=["POST"])
 def chat():
     data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict) or not isinstance(data.get("messages"), list):
+        return jsonify({"error": "messages must be a list"}), 400
+    if data.get("stream"):
+        return jsonify({"error": "streaming is not supported by this node"}), 501
     start = time.time()
-    result, status = call_local_llm(data.get("messages", []), app.config["MODEL_URL"])
+    result, status = call_local_llm(data, app.config["MODEL_URL"])
+    if not isinstance(result, dict):
+        return jsonify({"error": "model returned a non-object response"}), 502
     result["node_latency_s"] = round(time.time() - start, 3)
     return jsonify(result), status
 
